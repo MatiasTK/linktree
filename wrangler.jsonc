@@ -22,10 +22,9 @@
 	],
 	"d1_databases": [
 		{
-			"binding": "linktree_db",
+			"binding": "DB",
 			"database_name": "linktree-db",
-			"database_id": "16bda656-ba24-44f7-a360-34a30f9e7f52",
-			"remote": true
+			"database_id": "16bda656-ba24-44f7-a360-34a30f9e7f52"
 		}
 	]
 }
