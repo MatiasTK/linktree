@@ -1,6 +1,6 @@
 import { login, SESSION_COOKIE_NAME, SESSION_DURATION } from "@/lib/auth";
 import { checkRateLimit, recordFailedAttempt, clearAttempts } from "@/lib/rate-limit";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 interface LoginRequest {

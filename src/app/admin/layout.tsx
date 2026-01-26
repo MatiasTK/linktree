@@ -1,9 +1,11 @@
 import { getAuthUser } from '@/lib/auth';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Home, Layers, LayoutDashboard, Link2, LogOut, Settings } from 'lucide-react';
+import { Home, Layers, LayoutDashboard, Link2, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { LogoutButton } from '@/components/LogoutButton';
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getAuthUser();

@@ -2,7 +2,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 // Get D1 database binding
 export async function getDB(): Promise<D1Database> {
-  const ctx = await getCloudflareContext();
+  const ctx = await getCloudflareContext({ async: true });
   const env = ctx.env as unknown as Cloudflare.Env;
   return env.DB;
 }

@@ -98,7 +98,7 @@ async function verifySessionToken(token: string, passwordHash: string): Promise<
  * Get the password hash from environment
  */
 async function getPasswordHash(): Promise<string | null> {
-  const ctx = await getCloudflareContext();
+  const ctx = await getCloudflareContext({ async: true });
   const env = ctx.env as unknown as CloudflareEnv;
   return env.ADMIN_PASSWORD_HASH || null;
 }
