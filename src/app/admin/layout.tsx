@@ -1,8 +1,17 @@
+import { getAuthUser } from '@/lib/auth';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Home, Layers, LayoutDashboard, Link2, Settings } from 'lucide-react';
+import { Home, Layers, LayoutDashboard, Link2, LogOut, Settings } from 'lucide-react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { LogoutButton } from '@/components/LogoutButton';
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const user = await getAuthUser();
+
+  if (!user.isAuthenticated) {
+    redirect('/admin/login');
+  }
+
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
@@ -57,10 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="text-sm text-muted-foreground">Theme</span>
             <ThemeToggle />
           </div>
-          <div className="text-xs text-muted-foreground">
-            <p>Protected by</p>
-            <p className="font-medium">Cloudflare Access</p>
-          </div>
+          <LogoutButton />
         </div>
       </aside>
 
