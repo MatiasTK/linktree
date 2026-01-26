@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Advanced Linktree Clone
+
+A self-hosted Linktree clone built on Cloudflare's ecosystem - 100% free and optimized for SEO.
+
+## Stack
+
+- **Framework**: Next.js 15 (App Router) with `@opennextjs/cloudflare`
+- **Database**: Cloudflare D1 (SQLite)
+- **Styling**: Tailwind CSS v4 with automatic dark mode
+- **Icons**: Lucide React
+- **Auth**: Cloudflare Access (Zero Trust) for `/admin`
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20+
+- pnpm
+- Cloudflare account (free tier works)
+
+### Local Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Install dependencies
+pnpm install
+
+# Create local D1 database and run migrations
+npx wrangler d1 execute linktree-db --local --file=./migrations/0001_initial.sql
+
+# Start development server
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+#### 1. Create D1 Database
 
-## Learn More
+```bash
+# Login to Cloudflare
+npx wrangler login
 
-To learn more about Next.js, take a look at the following resources:
+# Create the D1 database
+npx wrangler d1 create linktree-db
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Copy the `database_id` from the output and update `wrangler.jsonc`:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```json
+"d1_databases": [
+  {
+    "binding": "DB",
+    "database_name": "linktree-db",
+    "database_id": "YOUR_ACTUAL_DATABASE_ID"
+  }
+]
+```
 
-## Deploy on Vercel
+#### 2. Run Migrations on Production
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npx wrangler d1 execute linktree-db --file=./migrations/0001_initial.sql
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+#### 3. Deploy to Cloudflare Pages
+
+```bash
+pnpm deploy
+```
+
+### Protecting the Admin Panel
+
+To protect `/admin` with Cloudflare Access:
+
+1. Go to [Cloudflare Zero Trust Dashboard](https://one.dash.cloudflare.com)
+2. Navigate to **Access** → **Applications**
+3. Create a new application:
+   - Type: Self-hosted
+   - Application domain: `yourdomain.com`
+   - Path: `/admin*`
+4. Configure identity providers (e.g., GitHub, Google, email OTP)
+5. Set access policies (e.g., allow specific emails)
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── sections/     # Sections CRUD API
+│   │   └── links/        # Links CRUD API + click tracking
+│   ├── admin/            # Admin dashboard (Client Components)
+│   ├── [slug]/           # Dynamic section pages (SSR)
+│   └── page.tsx          # Home page (SSR)
+├── components/
+│   └── icons.tsx         # Lucide icon components
+└── lib/
+    ├── auth.ts           # Cloudflare Access utilities
+    ├── db.ts             # D1 database helpers
+    └── types.ts          # TypeScript types
+```
+
+## Features
+
+- ✅ SSR public pages with dynamic SEO metadata
+- ✅ Admin dashboard with CRUD for sections and links
+- ✅ Click tracking analytics (async, non-blocking)
+- ✅ Automatic dark mode based on system preference
+- ✅ Icon selector with 30+ Lucide icons
+- ✅ Visibility toggles for sections and links
+- ✅ Zero cold starts with Cloudflare Workers
+
+## License
+
+MIT

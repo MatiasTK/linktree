@@ -1,103 +1,136 @@
-import Image from "next/image";
+import { DynamicIcon } from '@/components/icons';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { query } from '@/lib/db';
+import type { Section, Settings } from '@/lib/types';
+import Link from 'next/link';
 
-export default function Home() {
+// Force dynamic rendering for SSR
+export const dynamic = 'force-dynamic';
+
+interface SettingRow {
+  key: string;
+  value: string;
+}
+
+async function getSettings(): Promise<Settings> {
+  try {
+    const rows = await query<SettingRow>('SELECT key, value FROM settings');
+    const settings: Settings = {
+      site_title: 'My Links',
+      site_description: 'All my important links in one place',
+      profile_initial: 'M',
+      profile_image_url: '',
+    };
+    for (const row of rows) {
+      if (row.key in settings) {
+        settings[row.key as keyof Settings] = row.value;
+      }
+    }
+    return settings;
+  } catch (error) {
+    console.error('Error fetching settings:', error);
+    return {
+      site_title: 'My Links',
+      site_description: 'All my important links in one place',
+      profile_initial: 'M',
+      profile_image_url: '',
+    };
+  }
+}
+
+async function getSections(): Promise<Section[]> {
+  try {
+    const sections = await query<Section>(
+      'SELECT * FROM sections WHERE show_in_main = 1 ORDER BY display_order ASC',
+    );
+    return sections;
+  } catch (error) {
+    console.error('Error fetching sections:', error);
+    return [];
+  }
+}
+
+export default async function HomePage() {
+  const [settings, sections] = await Promise.all([getSettings(), getSections()]);
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main className="min-h-screen py-12 px-4 relative">
+      {/* Theme Toggle - Fixed position */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+      <div className="max-w-lg mx-auto">
+        {/* Header */}
+        <header className="text-center mb-10">
+          {settings.profile_image_url ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={settings.profile_image_url}
+              alt="Profile"
+              className="w-24 h-24 mx-auto mb-4 rounded-full object-cover ring-4 ring-primary/20"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          ) : (
+            <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-linear-to-br from-primary to-purple-500 flex items-center justify-center">
+              <span className="text-3xl font-bold text-white">
+                {settings.profile_initial || 'M'}
+              </span>
+            </div>
+          )}
+          <h1 className="text-2xl font-bold gradient-text">{settings.site_title}</h1>
+          <p className="text-muted-foreground mt-2">{settings.site_description}</p>
+        </header>
+
+        {/* Sections */}
+        <div className="space-y-4">
+          {sections.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <p>No sections available yet.</p>
+              <Link href="/admin" className="text-primary hover:underline mt-2 inline-block">
+                Add sections in the admin panel
+              </Link>
+            </div>
+          ) : (
+            sections.map((section) => (
+              <Link
+                key={section.id}
+                href={`/${section.slug}`}
+                className="link-card block p-4 rounded-xl bg-card border border-border"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <DynamicIcon name="folder" className="text-primary" size={20} />
+                  </div>
+                  <div>
+                    <h2 className="font-semibold">{section.title}</h2>
+                    <p className="text-sm text-muted-foreground">/{section.slug}</p>
+                  </div>
+                  <DynamicIcon
+                    name="chevron-right"
+                    className="ml-auto text-muted-foreground"
+                    size={20}
+                  />
+                </div>
+              </Link>
+            ))
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* Footer */}
+        <footer className="mt-12 text-center text-sm text-muted-foreground">
+          <p>
+            Powered by{' '}
+            <a
+              href="https://pages.cloudflare.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Cloudflare Pages
+            </a>
+          </p>
+        </footer>
+      </div>
+    </main>
   );
 }

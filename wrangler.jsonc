@@ -1,0 +1,30 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "linktree",
+  "compatibility_date": "2026-01-20",
+  "observability": {
+    "enabled": true
+  },
+  "main": ".open-next/worker.js",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "linktree"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "linktree-db",
+      "database_id": "YOUR_DATABASE_ID"
+    }
+  ]
+}
