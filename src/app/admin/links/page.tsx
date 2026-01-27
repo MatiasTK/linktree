@@ -2,6 +2,7 @@
 
 import { DynamicIcon, IconSelector } from '@/components/icons';
 import { SortableList } from '@/components/SortableList';
+import { useToast } from '@/components/Toast';
 import type { ApiResponse, ApiResponseWithWarning, IconType, Link as LinkType, Section } from '@/lib/types';
 import { ExternalLink, Eye, EyeOff, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
@@ -20,6 +21,7 @@ export default function LinksPage() {
   const [editingLink, setEditingLink] = useState<LinkType | null>(null);
   const [filterSection, setFilterSection] = useState<string>('');
   const [swapWarning, setSwapWarning] = useState<SwapWarning | null>(null);
+  const toast = useToast();
   const [formData, setFormData] = useState({
     section_id: 0,
     label: '',
@@ -137,11 +139,11 @@ export default function LinksPage() {
         fetchLinks();
         resetForm();
       } else {
-        alert(data.error || 'Failed to save link');
+        toast.error(data.error || 'Failed to save link');
       }
     } catch (error) {
       console.error('Error saving link:', error);
-      alert('Failed to save link');
+      toast.error('Failed to save link');
     }
   }
 
@@ -157,11 +159,11 @@ export default function LinksPage() {
       if (data.success) {
         fetchLinks();
       } else {
-        alert(data.error || 'Failed to delete link');
+        toast.error(data.error || 'Failed to delete link');
       }
     } catch (error) {
       console.error('Error deleting link:', error);
-      alert('Failed to delete link');
+      toast.error('Failed to delete link');
     }
   }
 

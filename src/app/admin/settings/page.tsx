@@ -1,5 +1,6 @@
 'use client';
 
+import { useToast } from '@/components/Toast';
 import type { ApiResponse, Settings } from '@/lib/types';
 import { Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -13,6 +14,7 @@ export default function SettingsPage() {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     fetchSettings();
@@ -45,13 +47,13 @@ export default function SettingsPage() {
       const data: ApiResponse<Settings> = await res.json();
 
       if (data.success) {
-        alert('Settings saved successfully!');
+        toast.success('Settings saved successfully!');
       } else {
-        alert(data.error || 'Failed to save settings');
+        toast.error(data.error || 'Failed to save settings');
       }
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Failed to save settings');
+      toast.error('Failed to save settings');
     } finally {
       setSaving(false);
     }

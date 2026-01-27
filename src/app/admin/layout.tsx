@@ -1,3 +1,4 @@
+import { AdminContent } from '@/components/AdminContent';
 import { getAuthUser } from '@/lib/auth';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Home, Layers, LayoutDashboard, Link2, Settings } from 'lucide-react';
@@ -73,7 +74,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-8 bg-background">{children}</main>
+      <main className="flex-1 p-8 bg-background">
+        <AdminContent>{children}</AdminContent>
+      </main>
     </div>
   );
 }

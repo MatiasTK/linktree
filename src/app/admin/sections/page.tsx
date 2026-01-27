@@ -1,6 +1,7 @@
 'use client';
 
 import { SortableList } from '@/components/SortableList';
+import { useToast } from '@/components/Toast';
 import type { ApiResponse, ApiResponseWithWarning, Section } from '@/lib/types';
 import { Eye, EyeOff, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ export default function SectionsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingSection, setEditingSection] = useState<Section | null>(null);
   const [swapWarning, setSwapWarning] = useState<SwapWarning | null>(null);
+  const toast = useToast();
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -103,11 +105,11 @@ export default function SectionsPage() {
         fetchSections();
         resetForm();
       } else {
-        alert(data.error || 'Failed to save section');
+        toast.error(data.error || 'Failed to save section');
       }
     } catch (error) {
       console.error('Error saving section:', error);
-      alert('Failed to save section');
+      toast.error('Failed to save section');
     }
   }
 
@@ -127,11 +129,11 @@ export default function SectionsPage() {
       if (data.success) {
         fetchSections();
       } else {
-        alert(data.error || 'Failed to delete section');
+        toast.error(data.error || 'Failed to delete section');
       }
     } catch (error) {
       console.error('Error deleting section:', error);
-      alert('Failed to delete section');
+      toast.error('Failed to delete section');
     }
   }
 
