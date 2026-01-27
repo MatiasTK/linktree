@@ -109,7 +109,7 @@ export default async function SectionPage({ params }: PageProps) {
           {/* Improved Back Button */}
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-secondary hover:bg-accent text-muted-foreground hover:text-foreground transition-all duration-200 hover:scale-105 group"
+            className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-secondary hover:bg-accent border border-border text-muted-foreground hover:text-foreground transition-all duration-200 hover:scale-105 group"
           >
             <Home size={16} className="group-hover:scale-110 transition-transform" />
             <span className="text-sm font-medium">Back to Home</span>
