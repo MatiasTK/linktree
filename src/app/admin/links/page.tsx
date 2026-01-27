@@ -1,5 +1,6 @@
 'use client';
 
+import { useConfirm } from '@/components/ConfirmModal';
 import { DynamicIcon, IconSelector } from '@/components/icons';
 import { SortableList } from '@/components/SortableList';
 import { useToast } from '@/components/Toast';
@@ -22,6 +23,7 @@ export default function LinksPage() {
   const [filterSection, setFilterSection] = useState<string>('');
   const [swapWarning, setSwapWarning] = useState<SwapWarning | null>(null);
   const toast = useToast();
+  const confirm = useConfirm();
   const [formData, setFormData] = useState({
     section_id: 0,
     label: '',
@@ -136,6 +138,7 @@ export default function LinksPage() {
       }
 
       if (data.success) {
+        toast.success(editingLink ? 'Link updated successfully' : 'Link created successfully');
         fetchLinks();
         resetForm();
       } else {
@@ -148,15 +151,22 @@ export default function LinksPage() {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this link?')) {
-      return;
-    }
+    const confirmed = await confirm({
+      title: 'Delete Link',
+      message: 'Are you sure you want to delete this link? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      variant: 'danger',
+    });
+
+    if (!confirmed) return;
 
     try {
       const res = await fetch(`/api/links/${id}`, { method: 'DELETE' });
       const data: ApiResponse<{ deleted: boolean }> = await res.json();
 
       if (data.success) {
+        toast.success('Link deleted successfully');
         fetchLinks();
       } else {
         toast.error(data.error || 'Failed to delete link');

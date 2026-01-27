@@ -1,5 +1,6 @@
 'use client';
 
+import { useConfirm } from '@/components/ConfirmModal';
 import { SortableList } from '@/components/SortableList';
 import { useToast } from '@/components/Toast';
 import type { ApiResponse, ApiResponseWithWarning, Section } from '@/lib/types';
@@ -19,6 +20,7 @@ export default function SectionsPage() {
   const [editingSection, setEditingSection] = useState<Section | null>(null);
   const [swapWarning, setSwapWarning] = useState<SwapWarning | null>(null);
   const toast = useToast();
+  const confirm = useConfirm();
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -102,6 +104,7 @@ export default function SectionsPage() {
       }
 
       if (data.success) {
+        toast.success(editingSection ? 'Section updated successfully' : 'Section created successfully');
         fetchSections();
         resetForm();
       } else {
@@ -114,19 +117,22 @@ export default function SectionsPage() {
   }
 
   async function handleDelete(id: number) {
-    if (
-      !confirm(
-        'Are you sure you want to delete this section? All links in it will also be deleted.',
-      )
-    ) {
-      return;
-    }
+    const confirmed = await confirm({
+      title: 'Delete Section',
+      message: 'Are you sure you want to delete this section? All links in it will also be deleted.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      variant: 'danger',
+    });
+
+    if (!confirmed) return;
 
     try {
       const res = await fetch(`/api/sections/${id}`, { method: 'DELETE' });
       const data: ApiResponse<{ deleted: boolean }> = await res.json();
 
       if (data.success) {
+        toast.success('Section deleted successfully');
         fetchSections();
       } else {
         toast.error(data.error || 'Failed to delete section');
