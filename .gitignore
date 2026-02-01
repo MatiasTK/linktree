@@ -38,8 +38,6 @@ yarn-error.log*
 
 # Cursor 
 .cursor/
-.claude/
-
 
 # typescript
 *.tsbuildinfo
