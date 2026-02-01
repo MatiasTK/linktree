@@ -1,116 +1,48 @@
-# Advanced Linktree Clone
+<div align="center">
+    <h1>
+        Linktree Clone
+    </h1>
+    <p>
+        <img alt="GitHub License" src="https://img.shields.io/github/license/matiastk/linktree">
+    </p>
+</div>
 
-A self-hosted Linktree clone built on Cloudflare's ecosystem - 100% free and optimized for SEO.
+*Clon de Linktree self-hosted construido sobre la infraestructura edge de Cloudflare.*
+
+## Características Principales
+
+- Secciones personalizables con orden drag-and-drop
+- Links con iconos y contador de clicks
+- Panel de administración protegido con autenticación
+- Modo claro y oscuro
+- Rate limiting para protección contra ataques
+- Diseño responsivo
+- Despliegue en el edge con Cloudflare Workers
+
+## Desarrollo
+
+### Prerequisitos
+
+- Node.js >= 20
+- pnpm >= 9
+
+### Build
+
+- Clonar el repositorio
+- Instalar las dependencias con `pnpm install`
+- Ejecutar migraciones locales con `npx wrangler d1 execute linktree-db --local --file=./migrations/0001_initial.sql`
+- Iniciar el servidor de desarrollo con `pnpm dev`
+
+### Despliegue
+
+- Configurar Cloudflare D1 en `wrangler.jsonc`
+- Ejecutar migraciones en producción con `npx wrangler d1 execute linktree-db --file=./migrations/0001_initial.sql`
+- Desplegar con `pnpm cf-deploy`
 
 ## Stack
 
-- **Framework**: Next.js 15 (App Router) with `@opennextjs/cloudflare`
-- **Database**: Cloudflare D1 (SQLite)
-- **Styling**: Tailwind CSS v4 with automatic dark mode
-- **Icons**: Lucide React
-- **Auth**: Cloudflare Access (Zero Trust) for `/admin`
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 20+
-- pnpm
-- Cloudflare account (free tier works)
-
-### Local Development
-
-```bash
-# Install dependencies
-pnpm install
-
-# Create local D1 database and run migrations
-npx wrangler d1 execute linktree-db --local --file=./migrations/0001_initial.sql
-
-# Start development server
-pnpm dev
-```
-
-Visit http://localhost:3000
-
-### Deployment
-
-#### 1. Create D1 Database
-
-```bash
-# Login to Cloudflare
-npx wrangler login
-
-# Create the D1 database
-npx wrangler d1 create linktree-db
-```
-
-Copy the `database_id` from the output and update `wrangler.jsonc`:
-
-```json
-"d1_databases": [
-  {
-    "binding": "DB",
-    "database_name": "linktree-db",
-    "database_id": "YOUR_ACTUAL_DATABASE_ID"
-  }
-]
-```
-
-#### 2. Run Migrations on Production
-
-```bash
-npx wrangler d1 execute linktree-db --file=./migrations/0001_initial.sql
-```
-
-#### 3. Deploy to Cloudflare Pages
-
-```bash
-pnpm deploy
-```
-
-### Protecting the Admin Panel
-
-To protect `/admin` with Cloudflare Access:
-
-1. Go to [Cloudflare Zero Trust Dashboard](https://one.dash.cloudflare.com)
-2. Navigate to **Access** → **Applications**
-3. Create a new application:
-   - Type: Self-hosted
-   - Application domain: `yourdomain.com`
-   - Path: `/admin*`
-4. Configure identity providers (e.g., GitHub, Google, email OTP)
-5. Set access policies (e.g., allow specific emails)
-
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── api/
-│   │   ├── sections/     # Sections CRUD API
-│   │   └── links/        # Links CRUD API + click tracking
-│   ├── admin/            # Admin dashboard (Client Components)
-│   ├── [slug]/           # Dynamic section pages (SSR)
-│   └── page.tsx          # Home page (SSR)
-├── components/
-│   └── icons.tsx         # Lucide icon components
-└── lib/
-    ├── auth.ts           # Cloudflare Access utilities
-    ├── db.ts             # D1 database helpers
-    └── types.ts          # TypeScript types
-```
-
-## Features
-
-- ✅ SSR public pages with dynamic SEO metadata
-- ✅ Admin dashboard with CRUD for sections and links
-- ✅ Click tracking analytics (async, non-blocking)
-- ✅ Automatic dark mode based on system preference
-- ✅ Icon selector with 30+ Lucide icons
-- ✅ Visibility toggles for sections and links
-- ✅ Zero cold starts with Cloudflare Workers
-
-## License
-
-MIT
+- [![Next.js](https://img.shields.io/badge/Next.js_15-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/) - Next.js 15 App Router
+- [![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/) - React 19
+- [![Cloudflare](https://img.shields.io/badge/Cloudflare_Workers-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/) - Cloudflare Workers + D1
+- [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/) - Tailwind CSS 4
+- [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) - TypeScript

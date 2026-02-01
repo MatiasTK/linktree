@@ -1,136 +1,71 @@
 'use client';
 
-import { useToast } from '@/components/Toast';
-import type { ApiResponse, Settings } from '@/lib/types';
+import { Button, Input, LoadingPage } from '@/components/atoms';
+import { FormField } from '@/components/molecules';
+import { AdminPageTemplate } from '@/components/templates';
+import { useSettings } from '@/hooks';
 import { Save } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState<Settings>({
-    site_title: 'My Links',
-    site_description: 'All my important links in one place',
-    profile_initial: 'M',
-    profile_image_url: '',
-  });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const toast = useToast();
+  const { settings, loading, saving, updateSettings, saveSettings } = useSettings();
 
-  useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  async function fetchSettings() {
-    try {
-      const res = await fetch('/api/settings');
-      const data: ApiResponse<Settings> = await res.json();
-      if (data.success && data.data) {
-        setSettings(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching settings:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
-
-    try {
-      const res = await fetch('/api/settings', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings),
-      });
-      const data: ApiResponse<Settings> = await res.json();
-
-      if (data.success) {
-        toast.success('Settings saved successfully!');
-      } else {
-        toast.error(data.error || 'Failed to save settings');
-      }
-    } catch (error) {
-      console.error('Error saving settings:', error);
-      toast.error('Failed to save settings');
-    } finally {
-      setSaving(false);
-    }
-  }
+    await saveSettings();
+  };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Site Settings</h1>
-      </div>
-
+    <AdminPageTemplate title="Site Settings">
       <div className="bg-card rounded-xl border border-border p-6 max-w-lg">
         <p className="text-muted-foreground mb-6">
           Configure the homepage profile and site-wide settings.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Site Title</label>
-            <input
+          <FormField label="Site Title" required>
+            <Input
               type="text"
               value={settings.site_title}
-              onChange={(e) => setSettings({ ...settings, site_title: e.target.value })}
-              className="input"
+              onChange={(e) => updateSettings({ ...settings, site_title: e.target.value })}
               placeholder="My Links"
               required
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Site Description</label>
-            <input
+          <FormField label="Site Description" required>
+            <Input
               type="text"
               value={settings.site_description}
-              onChange={(e) => setSettings({ ...settings, site_description: e.target.value })}
-              className="input"
+              onChange={(e) => updateSettings({ ...settings, site_description: e.target.value })}
               placeholder="All my important links in one place"
               required
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Profile Initial</label>
-            <input
+          <FormField label="Profile Initial" hint="Shown when no profile image is set">
+            <Input
               type="text"
               value={settings.profile_initial}
               onChange={(e) =>
-                setSettings({ ...settings, profile_initial: e.target.value.charAt(0) })
+                updateSettings({ ...settings, profile_initial: e.target.value.charAt(0) })
               }
-              className="input"
               placeholder="M"
               maxLength={1}
             />
-            <p className="text-xs text-muted-foreground mt-1">Shown when no profile image is set</p>
-          </div>
+          </FormField>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Profile Image URL</label>
-            <input
+          <FormField label="Profile Image URL" hint="Leave empty to show profile initial">
+            <Input
               type="url"
               value={settings.profile_image_url}
-              onChange={(e) => setSettings({ ...settings, profile_image_url: e.target.value })}
-              className="input"
+              onChange={(e) => updateSettings({ ...settings, profile_image_url: e.target.value })}
               placeholder="https://..."
             />
-            <p className="text-xs text-muted-foreground mt-1">
-              Leave empty to show profile initial
-            </p>
-          </div>
+          </FormField>
 
           {settings.profile_image_url && (
             <div className="flex items-center gap-4 p-3 rounded-lg bg-secondary">
@@ -148,13 +83,13 @@ export default function SettingsPage() {
           )}
 
           <div className="pt-4">
-            <button type="submit" className="btn btn-primary w-full" disabled={saving}>
+            <Button type="submit" className="w-full" isLoading={saving}>
               <Save size={18} />
               {saving ? 'Saving...' : 'Save Settings'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
-    </div>
+    </AdminPageTemplate>
   );
 }
