@@ -22,8 +22,7 @@ export interface Link {
   is_visible: number; // 0 or 1
   display_order: number;
   clicks: number;
-  group_title: string | null;
-  group_order: number;
+
   created_at: string;
   updated_at: string;
 }
@@ -64,8 +63,7 @@ export interface CreateLinkRequest {
   icon_type?: string;
   is_visible?: boolean;
   display_order?: number;
-  group_title?: string;
-  group_order?: number;
+
 }
 
 export interface UpdateLinkRequest {
@@ -74,8 +72,7 @@ export interface UpdateLinkRequest {
   icon_type?: string;
   is_visible?: boolean;
   display_order?: number;
-  group_title?: string;
-  group_order?: number;
+
   confirmSwap?: boolean;
 }
 

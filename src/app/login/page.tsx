@@ -1,5 +1,7 @@
 'use client';
 
+import { Button, Input } from '@/components/atoms';
+import { FormField } from '@/components/molecules';
 import { Lock } from 'lucide-react';
 import { useState } from 'react';
 
@@ -47,21 +49,18 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-1">
-                Password
-              </label>
-              <input
+            <FormField label="Password">
+              <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="input"
                 placeholder="Enter password"
                 required
                 autoFocus
+                error={!!error}
               />
-            </div>
+            </FormField>
 
             {error && (
               <div className="text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-lg">
@@ -69,9 +68,9 @@ export default function LoginPage() {
               </div>
             )}
 
-            <button type="submit" className="btn btn-primary w-full" disabled={loading}>
+            <Button type="submit" className="w-full" isLoading={loading}>
               {loading ? 'Logging in...' : 'Login'}
-            </button>
+            </Button>
           </form>
         </div>
       </div>

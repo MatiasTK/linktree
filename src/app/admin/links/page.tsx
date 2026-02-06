@@ -1,225 +1,130 @@
 'use client';
 
-import { DynamicIcon, IconSelector } from '@/components/icons';
+import { Button, LoadingPage, Select } from '@/components/atoms';
+import { EmptyState } from '@/components/molecules';
+import { LinkForm, LinkListItem, Modal, SwapWarningModal } from '@/components/organisms';
 import { SortableList } from '@/components/SortableList';
-import type { ApiResponse, ApiResponseWithWarning, IconType, Link as LinkType, Section } from '@/lib/types';
-import { ExternalLink, Eye, EyeOff, Pencil, Plus, Trash2 } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { AdminPageTemplate } from '@/components/templates';
+import { useLinks, useModal, type LinkFormData } from '@/hooks';
+import type { IconType, Link as LinkType } from '@/lib/types';
+import { Plus } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
-interface SwapWarning {
-  message: string;
-  conflictWith: LinkType;
-  currentOrder: number;
-}
+const initialFormData: LinkFormData = {
+  section_id: 0,
+  label: '',
+  url: '',
+  icon_type: 'link' as IconType,
+  is_visible: true,
+  display_order: undefined,
+};
 
 export default function LinksPage() {
-  const [links, setLinks] = useState<LinkType[]>([]);
-  const [sections, setSections] = useState<Section[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editingLink, setEditingLink] = useState<LinkType | null>(null);
-  const [filterSection, setFilterSection] = useState<string>('');
-  const [swapWarning, setSwapWarning] = useState<SwapWarning | null>(null);
-  const [formData, setFormData] = useState({
-    section_id: 0,
-    label: '',
-    url: '',
-    icon_type: 'link' as IconType,
-    is_visible: true,
-    display_order: 0,
-    group_title: '',
-    group_order: 0,
-  });
+  const {
+    links,
+    sections,
+    loading,
+    swapWarning,
+    filterSection,
+    setFilterSection,
+    createLink,
+    updateLink,
+    deleteLink,
+    toggleVisibility,
+    reorderLinks,
+    clearSwapWarning,
+    getSectionName,
+  } = useLinks();
 
-  const fetchLinks = useCallback(async () => {
-    try {
-      const url = filterSection ? `/api/links?sectionId=${filterSection}` : '/api/links';
-      const res = await fetch(url);
-      const data: ApiResponse<LinkType[]> = await res.json();
-      if (data.success && data.data) {
-        setLinks(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching links:', error);
+  const formModal = useModal<LinkType>();
+  const editingLink = formModal.data;
+  const [formData, setFormData] = useState<LinkFormData>(initialFormData);
+
+  const handleOpenForm = (link?: LinkType) => {
+    if (link) {
+      setFormData({
+        section_id: link.section_id,
+        label: link.label,
+        url: link.url,
+        icon_type: link.icon_type as IconType,
+        is_visible: link.is_visible === 1,
+        display_order: link.display_order,
+      });
+      formModal.open(link);
+    } else {
+      setFormData({ ...initialFormData, section_id: sections[0]?.id || 0 });
+      formModal.open();
     }
-  }, [filterSection]);
+  };
 
-  const fetchSections = useCallback(async () => {
-    try {
-      const res = await fetch('/api/sections');
-      const data: ApiResponse<Section[]> = await res.json();
-      if (data.success && data.data) {
-        setSections(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching sections:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    Promise.all([fetchLinks(), fetchSections()]).finally(() => setLoading(false));
-  }, [fetchLinks, fetchSections]);
-
-  useEffect(() => {
-    fetchLinks();
-  }, [fetchLinks]);
-
-  function resetForm() {
-    setFormData({
-      section_id: sections[0]?.id || 0,
-      label: '',
-      url: '',
-      icon_type: 'link',
-      is_visible: true,
-      display_order: 0,
-      group_title: '',
-      group_order: 0,
-    });
-    setEditingLink(null);
-    setShowForm(false);
-    setSwapWarning(null);
-  }
-
-  function handleEdit(link: LinkType) {
-    setFormData({
-      section_id: link.section_id,
-      label: link.label,
-      url: link.url,
-      icon_type: link.icon_type as IconType,
-      is_visible: link.is_visible === 1,
-      display_order: link.display_order,
-      group_title: link.group_title || '',
-      group_order: link.group_order || 0,
-    });
-    setEditingLink(link);
-    setShowForm(true);
-    setSwapWarning(null);
-  }
-
-  function openAddForm() {
-    setFormData({
-      section_id: sections[0]?.id || 0,
-      label: '',
-      url: '',
-      icon_type: 'link',
-      is_visible: true,
-      display_order: 0,
-      group_title: '',
-      group_order: 0,
-    });
-    setShowForm(true);
-  }
-
-  async function handleSubmit(e: React.FormEvent, confirmSwap = false) {
+  const handleSubmit = async (e: React.FormEvent, confirmSwap = false) => {
     e.preventDefault();
 
-    const url = editingLink ? `/api/links/${editingLink.id}` : '/api/links';
-    const method = editingLink ? 'PUT' : 'POST';
-
-    try {
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, confirmSwap }),
-      });
-      const data: ApiResponseWithWarning<LinkType, LinkType> = await res.json();
-
-      if (data.warning && !confirmSwap) {
-        setSwapWarning({
-          message: data.message!,
-          conflictWith: data.conflictWith!,
-          currentOrder: data.currentOrder!,
-        });
-        return;
-      }
-
-      if (data.success) {
-        fetchLinks();
-        resetForm();
-      } else {
-        alert(data.error || 'Failed to save link');
-      }
-    } catch (error) {
-      console.error('Error saving link:', error);
-      alert('Failed to save link');
-    }
-  }
-
-  async function handleDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this link?')) {
-      return;
+    let success: boolean;
+    if (editingLink) {
+      success = await updateLink(editingLink.id, formData, confirmSwap);
+    } else {
+      success = await createLink(formData, confirmSwap);
     }
 
-    try {
-      const res = await fetch(`/api/links/${id}`, { method: 'DELETE' });
-      const data: ApiResponse<{ deleted: boolean }> = await res.json();
-
-      if (data.success) {
-        fetchLinks();
-      } else {
-        alert(data.error || 'Failed to delete link');
-      }
-    } catch (error) {
-      console.error('Error deleting link:', error);
-      alert('Failed to delete link');
+    if (success) {
+      formModal.close();
+      setFormData(initialFormData);
     }
-  }
+  };
 
-  async function toggleVisibility(link: LinkType) {
-    try {
-      const res = await fetch(`/api/links/${link.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ is_visible: link.is_visible !== 1 }),
-      });
-      const data: ApiResponse<LinkType> = await res.json();
-
-      if (data.success) {
-        fetchLinks();
-      }
-    } catch (error) {
-      console.error('Error updating link:', error);
+  const handleConfirmSwap = async () => {
+    let success: boolean;
+    if (editingLink) {
+      success = await updateLink(editingLink.id, formData, true);
+    } else {
+      success = await createLink(formData, true);
     }
-  }
 
-  // Handle drag-drop reorder
-  async function handleReorder(reorderedLinks: LinkType[]) {
-    setLinks(reorderedLinks);
-    for (let i = 0; i < reorderedLinks.length; i++) {
-      const link = reorderedLinks[i];
-      if (link.display_order !== i) {
-        await fetch(`/api/links/${link.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ display_order: i, confirmSwap: true }),
-        });
+    clearSwapWarning();
+    if (success) {
+      formModal.close();
+      setFormData(initialFormData);
+    }
+  };
+
+  const handleFormChange = (updates: Partial<LinkFormData>) => {
+    setFormData((prev) => ({ ...prev, ...updates }));
+  };
+
+  const handleCancel = () => {
+    formModal.close();
+    clearSwapWarning();
+    setFormData(initialFormData);
+  };
+
+  // Group links by section for the "All Sections" view
+  const linksBySection = useMemo(() => {
+    if (filterSection) return [];
+    const grouped: { section: (typeof sections)[number]; links: LinkType[] }[] = [];
+    for (const section of sections) {
+      const sectionLinks = links.filter((l) => l.section_id === section.id);
+      if (sectionLinks.length > 0) {
+        grouped.push({ section, links: sectionLinks });
       }
     }
-    fetchLinks();
-  }
-
-  function getSectionName(sectionId: number) {
-    return sections.find((s) => s.id === sectionId)?.title || 'Unknown';
-  }
+    return grouped;
+  }, [links, sections, filterSection]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Links</h1>
-        <button onClick={openAddForm} className="btn btn-primary" disabled={sections.length === 0}>
+    <AdminPageTemplate
+      title="Links"
+      action={
+        <Button onClick={() => handleOpenForm()} disabled={sections.length === 0}>
           <Plus size={18} />
           Add Link
-        </button>
-      </div>
-
+        </Button>
+      }
+    >
       {sections.length === 0 && (
         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
           <p className="text-yellow-600 dark:text-yellow-400">
@@ -230,10 +135,10 @@ export default function LinksPage() {
 
       {/* Filter */}
       <div className="mb-6">
-        <select
+        <Select
           value={filterSection}
           onChange={(e) => setFilterSection(e.target.value)}
-          className="select max-w-xs"
+          className="max-w-xs"
         >
           <option value="">All Sections</option>
           {sections.map((section) => (
@@ -241,225 +146,87 @@ export default function LinksPage() {
               {section.title}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {/* Swap Warning */}
-      {swapWarning && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-card rounded-xl border border-border p-6 w-full max-w-md mx-4">
-            <h2 className="text-lg font-semibold mb-4 text-yellow-500">Order Conflict</h2>
-            <p className="text-muted-foreground mb-4">{swapWarning.message}</p>
-            <p className="text-sm mb-6">
-              &quot;{swapWarning.conflictWith.label}&quot; will get order {swapWarning.currentOrder}{' '}
-              instead.
-            </p>
-            <div className="flex gap-3">
-              <button onClick={resetForm} className="btn btn-secondary flex-1">
-                Cancel
-              </button>
-              <button onClick={(e) => handleSubmit(e, true)} className="btn btn-primary flex-1">
-                Swap Orders
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <SwapWarningModal
+        isOpen={!!swapWarning}
+        message={swapWarning?.message || ''}
+        conflictLabel={swapWarning?.conflictWith?.label || ''}
+        newOrder={swapWarning?.currentOrder || 0}
+        onCancel={handleCancel}
+        onConfirm={handleConfirmSwap}
+      />
 
       {/* Form Modal */}
-      {showForm && !swapWarning && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-card rounded-xl border border-border p-6 w-full max-w-md my-8">
-            <h2 className="text-lg font-semibold mb-4">{editingLink ? 'Edit Link' : 'New Link'}</h2>
-            <form onSubmit={(e) => handleSubmit(e)} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Section *</label>
-                <select
-                  value={formData.section_id}
-                  onChange={(e) =>
-                    setFormData({ ...formData, section_id: parseInt(e.target.value) })
-                  }
-                  className="select"
-                  required
-                >
-                  {sections.map((section) => (
-                    <option key={section.id} value={section.id}>
-                      {section.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Label *</label>
-                <input
-                  type="text"
-                  value={formData.label}
-                  onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-                  className="input"
-                  placeholder="e.g. My GitHub"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">URL *</label>
-                <input
-                  type="url"
-                  value={formData.url}
-                  onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                  className="input"
-                  placeholder="https://..."
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Icon</label>
-                <IconSelector
-                  value={formData.icon_type}
-                  onChange={(icon) => setFormData({ ...formData, icon_type: icon })}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Group Title</label>
-                <input
-                  type="text"
-                  value={formData.group_title}
-                  onChange={(e) => setFormData({ ...formData, group_title: e.target.value })}
-                  className="input"
-                  placeholder="e.g. Work, Social, etc."
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Links with same group title are grouped
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Group Order</label>
-                  <input
-                    type="number"
-                    value={formData.group_order}
-                    onChange={(e) =>
-                      setFormData({ ...formData, group_order: parseInt(e.target.value) || 0 })
-                    }
-                    className="input"
-                    min="0"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">Order of the group</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Display Order</label>
-                  <input
-                    type="number"
-                    value={formData.display_order}
-                    onChange={(e) =>
-                      setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })
-                    }
-                    className="input"
-                    min="0"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">Order within group</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    checked={formData.is_visible}
-                    onChange={(e) => setFormData({ ...formData, is_visible: e.target.checked })}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-                <span className="text-sm">Visible</span>
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button type="button" onClick={resetForm} className="btn btn-secondary flex-1">
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-primary flex-1">
-                  {editingLink ? 'Update' : 'Create'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={formModal.isOpen && !swapWarning}
+        onClose={handleCancel}
+        title={editingLink ? 'Edit Link' : 'New Link'}
+      >
+        <LinkForm
+          formData={formData}
+          sections={sections}
+          isEditing={!!editingLink}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          onChange={handleFormChange}
+        />
+      </Modal>
 
       {/* Links List with Drag-Drop */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
-        {links.length === 0 ? (
-          <div className="p-12 text-center text-muted-foreground">
-            <p>
-              {filterSection
-                ? 'No links in this section.'
-                : 'No links yet. Create your first link!'}
-            </p>
-          </div>
-        ) : (
+      {links.length === 0 ? (
+        <div className="bg-card rounded-xl border border-border overflow-hidden">
+          <EmptyState
+            message={
+              filterSection ? 'No links in this section.' : 'No links yet. Create your first link!'
+            }
+          />
+        </div>
+      ) : filterSection ? (
+        <div className="bg-card rounded-xl border border-border overflow-hidden">
           <SortableList
             items={links}
-            onReorder={handleReorder}
+            onReorder={reorderLinks}
             renderItem={(link) => (
-              <div className="flex items-center gap-4 p-4 hover:bg-accent/30 transition-colors">
-                <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
-                  <DynamicIcon name={link.icon_type} className="text-primary" size={20} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{link.label}</p>
-                  <p className="text-sm text-muted-foreground truncate">{link.url}</p>
-                  <div className="flex gap-2 mt-1">
-                    <span className="text-xs bg-secondary px-2 py-0.5 rounded">
-                      {getSectionName(link.section_id)}
-                    </span>
-                    {link.group_title && (
-                      <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
-                        {link.group_title}
-                      </span>
-                    )}
-                    <span className="text-xs text-muted-foreground">
-                      Order: {link.display_order}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-lg text-muted-foreground hover:bg-accent transition-colors"
-                    title="Open link"
-                  >
-                    <ExternalLink size={18} />
-                  </a>
-                  <button
-                    onClick={() => toggleVisibility(link)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      link.is_visible
-                        ? 'text-green-500 hover:bg-green-500/10'
-                        : 'text-muted-foreground hover:bg-accent'
-                    }`}
-                    title={link.is_visible ? 'Visible' : 'Hidden'}
-                  >
-                    {link.is_visible ? <Eye size={18} /> : <EyeOff size={18} />}
-                  </button>
-                  <button
-                    onClick={() => handleEdit(link)}
-                    className="p-2 rounded-lg text-muted-foreground hover:bg-accent transition-colors"
-                    title="Edit"
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(link.id)}
-                    className="p-2 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
-                    title="Delete"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </div>
+              <LinkListItem
+                link={link}
+                sectionName={getSectionName(link.section_id)}
+                onEdit={() => handleOpenForm(link)}
+                onDelete={() => deleteLink(link.id)}
+                onToggleVisibility={() => toggleVisibility(link)}
+              />
             )}
           />
-        )}
-      </div>
-    </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {linksBySection.map(({ section, links: sectionLinks }) => (
+            <div
+              key={section.id}
+              className="bg-card rounded-xl border border-border overflow-hidden"
+            >
+              <div className="px-4 py-3 border-b border-border bg-secondary/30">
+                <h3 className="text-sm font-medium text-muted-foreground">{section.title}</h3>
+              </div>
+              <SortableList
+                items={sectionLinks}
+                onReorder={reorderLinks}
+                renderItem={(link) => (
+                  <LinkListItem
+                    link={link}
+                    sectionName={section.title}
+                    onEdit={() => handleOpenForm(link)}
+                    onDelete={() => deleteLink(link.id)}
+                    onToggleVisibility={() => toggleVisibility(link)}
+                  />
+                )}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+    </AdminPageTemplate>
   );
 }

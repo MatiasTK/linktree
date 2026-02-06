@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+.open-next/
+out/
+
+# Cache
+.turbo/
+.cache/
+
+# IDE
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Lock files (large, not needed for understanding code)
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Wrangler
+.wrangler/
