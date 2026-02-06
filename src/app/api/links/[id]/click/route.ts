@@ -1,4 +1,5 @@
 import { linksService } from '@/services/links.service';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -10,10 +11,14 @@ interface RouteParams {
 export async function POST(_request: Request, { params }: RouteParams) {
   const { id } = await params;
 
-  // Fire-and-forget: increment click counter without blocking
-  linksService.trackClick(id).catch((error) => {
-    console.error('Error tracking click:', error);
-  });
+  // Use waitUntil to ensure the click tracking completes in the background
+  // This is required for Cloudflare Workers which terminate after the response is sent
+  const ctx = await getCloudflareContext({ async: true });
+  ctx.ctx.waitUntil(
+    linksService.trackClick(id).catch((error) => {
+      console.error('Error tracking click:', error);
+    })
+  );
 
   return NextResponse.json({ success: true });
 }
