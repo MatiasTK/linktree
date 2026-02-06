@@ -3,6 +3,7 @@ import type { Section } from '@/lib/types';
 import {
   type ServiceResult,
   handleDisplayOrderSwap,
+  shiftDisplayOrdersForInsert,
   buildAndExecuteUpdate,
   boolToInt,
 } from './base.service';
@@ -106,6 +107,17 @@ export const sectionsService = {
         return { success: false, error: 'A section with this slug already exists', status: 400 };
       }
 
+      // Auto-calculate display_order if not provided, otherwise shift existing items
+      let displayOrder = data.display_order;
+      if (displayOrder === undefined) {
+        const maxResult = await queryFirst<{ max_order: number }>(
+          'SELECT COALESCE(MAX(display_order), -1) as max_order FROM sections'
+        );
+        displayOrder = (maxResult?.max_order ?? -1) + 1;
+      } else {
+        await shiftDisplayOrdersForInsert({ table: 'sections', displayOrder });
+      }
+
       const result = await execute(
         `INSERT INTO sections (title, slug, show_in_main, display_order, description, profile_initial, profile_image_url)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -113,7 +125,7 @@ export const sectionsService = {
           data.title,
           data.slug,
           boolToInt(data.show_in_main ?? true),
-          data.display_order ?? 0,
+          displayOrder,
           data.description ?? null,
           data.profile_initial ?? null,
           data.profile_image_url ?? null,
@@ -208,7 +220,12 @@ export const sectionsService = {
         return { success: false, error: 'Section not found', status: 404 };
       }
 
+      const deletedOrder = existing.display_order;
       await execute('DELETE FROM sections WHERE id = ?', [id]);
+      await execute(
+        'UPDATE sections SET display_order = display_order - 1, updated_at = CURRENT_TIMESTAMP WHERE display_order > ?',
+        [deletedOrder]
+      );
       return { success: true, data: { deleted: true } };
     } catch (error) {
       console.error('Error deleting section:', error);

@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     title,
     slug,
     show_in_main: validation.data!.show_in_main ?? true,
-    display_order: validation.data!.display_order ?? 0,
+    display_order: validation.data!.display_order,
     description: validation.data!.description ?? null,
     profile_initial: validation.data!.profile_initial ?? null,
     profile_image_url: validation.data!.profile_image_url ?? null,

@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "cf-deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "preview:prod": "opennextjs-cloudflare build && opennextjs-cloudflare preview --remote",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {

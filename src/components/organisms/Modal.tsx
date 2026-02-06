@@ -58,7 +58,7 @@ export function SwapWarningModal({
         <h2 className="text-lg font-semibold mb-4 text-yellow-500">Order Conflict</h2>
         <p className="text-muted-foreground mb-4">{message}</p>
         <p className="text-sm mb-6">
-          &quot;{conflictLabel}&quot; will get order {newOrder} instead.
+          &quot;{conflictLabel}&quot; will get order {newOrder + 1} instead.
         </p>
         <div className="flex gap-3">
           <button onClick={onCancel} className="btn btn-secondary flex-1">

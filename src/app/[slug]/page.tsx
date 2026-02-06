@@ -1,9 +1,8 @@
 import { EmptyState } from '@/components/molecules';
 import { LinkCard, ProfileHeader } from '@/components/organisms';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import type { Link as LinkType } from '@/lib/types';
 import { linksService, sectionsService } from '@/services';
-import { Home } from 'lucide-react';
+import { Code, Home } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -12,21 +11,6 @@ export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
-}
-
-// Group links by group_title
-function groupLinks(links: LinkType[]) {
-  const groups = new Map<string | null, LinkType[]>();
-
-  for (const link of links) {
-    const key = link.group_title;
-    if (!groups.has(key)) {
-      groups.set(key, []);
-    }
-    groups.get(key)!.push(link);
-  }
-
-  return groups;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -56,7 +40,6 @@ export default async function SectionPage({ params }: PageProps) {
   }
 
   const links = await linksService.getVisibleBySection(section.id);
-  const groupedLinks = groupLinks(links);
 
   const profileInitial = section.profile_initial || section.title.charAt(0).toUpperCase();
   const description =
@@ -87,37 +70,25 @@ export default async function SectionPage({ params }: PageProps) {
           size="md"
         />
 
-        <div className="space-y-6">
+        <div className="space-y-3">
           {links.length === 0 ? (
             <EmptyState message="No links in this section yet." />
           ) : (
-            Array.from(groupedLinks.entries()).map(([groupTitle, groupLinks]) => (
-              <div key={groupTitle ?? '__ungrouped__'}>
-                {groupTitle && (
-                  <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">
-                    {groupTitle}
-                  </h2>
-                )}
-                <div className="space-y-3">
-                  {groupLinks.map((link) => (
-                    <LinkCard key={link.id} link={link} />
-                  ))}
-                </div>
-              </div>
-            ))
+            links.map((link) => <LinkCard key={link.id} link={link} />)
           )}
         </div>
 
         <footer className="mt-12 text-center text-sm text-muted-foreground">
-          <p>
-            Powered by{' '}
+          <p className="flex items-center justify-center gap-1">
+            Made by
+            <Code size={16} className="text-primary" />
             <a
-              href="https://pages.cloudflare.com"
+              href="https://github.com/MatiasTK"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
-              Cloudflare Pages
+              MatiasTK
             </a>
           </p>
         </footer>

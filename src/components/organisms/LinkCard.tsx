@@ -8,13 +8,8 @@ interface LinkCardProps {
 }
 
 export function LinkCard({ link }: LinkCardProps) {
-  const handleClick = async () => {
-    // Fire-and-forget click tracking
-    fetch(`/api/links/${link.id}/click`, {
-      method: 'POST',
-    }).catch(() => {
-      // Ignore errors - click tracking is non-critical
-    });
+  const handleClick = () => {
+    navigator.sendBeacon(`/api/links/${link.id}/click`);
   };
 
   return (

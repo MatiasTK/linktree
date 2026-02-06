@@ -28,7 +28,7 @@ export interface SectionFormData {
   title: string;
   slug: string;
   show_in_main: boolean;
-  display_order: number;
+  display_order: number | undefined;
   description: string;
   profile_initial: string;
   profile_image_url: string;

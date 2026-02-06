@@ -1,5 +1,5 @@
-import { requireAuth, unauthorizedResponse } from '@/lib/auth';
 import { apiError, serviceToResponse } from '@/lib/api-response';
+import { requireAuth, unauthorizedResponse } from '@/lib/auth';
 import { validateLinkData, validatePositiveInt } from '@/lib/validation';
 import { linksService } from '@/services/links.service';
 
@@ -45,9 +45,7 @@ export async function POST(request: Request) {
     url,
     icon_type: validation.data!.icon_type ?? 'link',
     is_visible: validation.data!.is_visible ?? true,
-    display_order: validation.data!.display_order ?? 0,
-    group_title: validation.data!.group_title ?? null,
-    group_order: validation.data!.group_order ?? 0,
+    display_order: validation.data!.display_order,
   });
 
   if (result.success) {

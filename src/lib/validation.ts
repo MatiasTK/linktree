@@ -7,7 +7,7 @@ export const MAX_LENGTHS = {
   label: 100,
   url: 2000,
   description: 500,
-  group_title: 50,
+
   profile_initial: 1,
   profile_image_url: 2000,
   site_title: 100,
@@ -143,8 +143,7 @@ export function validateLinkData(data: Record<string, unknown>): ValidationResul
   icon_type?: IconType;
   is_visible?: boolean;
   display_order?: number;
-  group_title?: string | null;
-  group_order?: number;
+
 }> {
   const result: Record<string, unknown> = {};
 
@@ -184,14 +183,7 @@ export function validateLinkData(data: Record<string, unknown>): ValidationResul
     result.display_order = validatePositiveInt(data.display_order);
   }
 
-  if ('group_title' in data) {
-    const groupTitle = sanitizeString(data.group_title, MAX_LENGTHS.group_title);
-    result.group_title = groupTitle.length > 0 ? groupTitle : null;
-  }
 
-  if ('group_order' in data) {
-    result.group_order = validatePositiveInt(data.group_order);
-  }
 
   return { success: true, data: result };
 }

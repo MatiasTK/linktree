@@ -65,34 +65,19 @@ export function LinkForm({
         />
       </FormField>
 
-      <FormField label="Group Title" hint="Links with same group title are grouped">
+      <FormField label="Display Order" hint="Order within section">
         <Input
-          type="text"
-          value={formData.group_title}
-          onChange={(e) => onChange({ group_title: e.target.value })}
-          placeholder="e.g. Work, Social, etc."
+          type="number"
+          value={formData.display_order !== undefined ? formData.display_order + 1 : ''}
+          onChange={(e) =>
+            onChange({
+              display_order: e.target.value === '' ? undefined : parseInt(e.target.value) - 1,
+            })
+          }
+          min={1}
+          placeholder="Auto (último)"
         />
       </FormField>
-
-      <div className="grid grid-cols-2 gap-4">
-        <FormField label="Group Order" hint="Order of the group">
-          <Input
-            type="number"
-            value={formData.group_order}
-            onChange={(e) => onChange({ group_order: parseInt(e.target.value) || 0 })}
-            min={0}
-          />
-        </FormField>
-
-        <FormField label="Display Order" hint="Order within group">
-          <Input
-            type="number"
-            value={formData.display_order}
-            onChange={(e) => onChange({ display_order: parseInt(e.target.value) || 0 })}
-            min={0}
-          />
-        </FormField>
-      </div>
 
       <Toggle
         label="Visible"

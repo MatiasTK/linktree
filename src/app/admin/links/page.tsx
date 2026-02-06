@@ -8,7 +8,7 @@ import { AdminPageTemplate } from '@/components/templates';
 import { useLinks, useModal, type LinkFormData } from '@/hooks';
 import type { IconType, Link as LinkType } from '@/lib/types';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 const initialFormData: LinkFormData = {
   section_id: 0,
@@ -16,9 +16,7 @@ const initialFormData: LinkFormData = {
   url: '',
   icon_type: 'link' as IconType,
   is_visible: true,
-  display_order: 0,
-  group_title: '',
-  group_order: 0,
+  display_order: undefined,
 };
 
 export default function LinksPage() {
@@ -51,8 +49,6 @@ export default function LinksPage() {
         icon_type: link.icon_type as IconType,
         is_visible: link.is_visible === 1,
         display_order: link.display_order,
-        group_title: link.group_title || '',
-        group_order: link.group_order || 0,
       });
       formModal.open(link);
     } else {
@@ -85,6 +81,7 @@ export default function LinksPage() {
       success = await createLink(formData, true);
     }
 
+    clearSwapWarning();
     if (success) {
       formModal.close();
       setFormData(initialFormData);
@@ -100,6 +97,19 @@ export default function LinksPage() {
     clearSwapWarning();
     setFormData(initialFormData);
   };
+
+  // Group links by section for the "All Sections" view
+  const linksBySection = useMemo(() => {
+    if (filterSection) return [];
+    const grouped: { section: (typeof sections)[number]; links: LinkType[] }[] = [];
+    for (const section of sections) {
+      const sectionLinks = links.filter((l) => l.section_id === section.id);
+      if (sectionLinks.length > 0) {
+        grouped.push({ section, links: sectionLinks });
+      }
+    }
+    return grouped;
+  }, [links, sections, filterSection]);
 
   if (loading) {
     return <LoadingPage />;
@@ -166,16 +176,16 @@ export default function LinksPage() {
       </Modal>
 
       {/* Links List with Drag-Drop */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
-        {links.length === 0 ? (
+      {links.length === 0 ? (
+        <div className="bg-card rounded-xl border border-border overflow-hidden">
           <EmptyState
             message={
-              filterSection
-                ? 'No links in this section.'
-                : 'No links yet. Create your first link!'
+              filterSection ? 'No links in this section.' : 'No links yet. Create your first link!'
             }
           />
-        ) : (
+        </div>
+      ) : filterSection ? (
+        <div className="bg-card rounded-xl border border-border overflow-hidden">
           <SortableList
             items={links}
             onReorder={reorderLinks}
@@ -189,8 +199,34 @@ export default function LinksPage() {
               />
             )}
           />
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {linksBySection.map(({ section, links: sectionLinks }) => (
+            <div
+              key={section.id}
+              className="bg-card rounded-xl border border-border overflow-hidden"
+            >
+              <div className="px-4 py-3 border-b border-border bg-secondary/30">
+                <h3 className="text-sm font-medium text-muted-foreground">{section.title}</h3>
+              </div>
+              <SortableList
+                items={sectionLinks}
+                onReorder={reorderLinks}
+                renderItem={(link) => (
+                  <LinkListItem
+                    link={link}
+                    sectionName={section.title}
+                    onEdit={() => handleOpenForm(link)}
+                    onDelete={() => deleteLink(link.id)}
+                    onToggleVisibility={() => toggleVisibility(link)}
+                  />
+                )}
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </AdminPageTemplate>
   );
 }

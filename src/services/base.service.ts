@@ -62,7 +62,7 @@ export async function handleDisplayOrderSwap<T extends { id: number; display_ord
     return {
       success: false,
       warning: true,
-      message: `Display order ${newOrder} is already used by "${conflict[nameField]}". Confirm to swap orders.`,
+      message: `Display order ${newOrder + 1} is already used by "${conflict[nameField]}". Confirm to swap orders.`,
       conflictWith: conflict,
       currentOrder: currentItem.display_order,
     };
@@ -75,6 +75,31 @@ export async function handleDisplayOrderSwap<T extends { id: number; display_ord
   );
 
   return null; // Swap handled
+}
+
+/**
+ * Shift display_order up by 1 for all items at >= the given order when creating.
+ * This makes room for the new item without any warning/confirmation.
+ */
+export async function shiftDisplayOrdersForInsert(options: {
+  table: 'sections' | 'links';
+  displayOrder: number;
+  /** For links, scope to the same section */
+  sectionId?: number;
+}): Promise<void> {
+  const { table, displayOrder, sectionId } = options;
+
+  if (table === 'links' && sectionId !== undefined) {
+    await execute(
+      `UPDATE ${table} SET display_order = display_order + 1, updated_at = CURRENT_TIMESTAMP WHERE section_id = ? AND display_order >= ?`,
+      [sectionId, displayOrder]
+    );
+  } else {
+    await execute(
+      `UPDATE ${table} SET display_order = display_order + 1, updated_at = CURRENT_TIMESTAMP WHERE display_order >= ?`,
+      [displayOrder]
+    );
+  }
 }
 
 /**

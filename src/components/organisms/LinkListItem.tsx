@@ -30,12 +30,7 @@ export function LinkListItem({
         <p className="text-sm text-muted-foreground truncate">{link.url}</p>
         <div className="flex gap-2 mt-1">
           <span className="text-xs bg-secondary px-2 py-0.5 rounded">{sectionName}</span>
-          {link.group_title && (
-            <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
-              {link.group_title}
-            </span>
-          )}
-          <span className="text-xs text-muted-foreground">Order: {link.display_order}</span>
+          <span className="text-xs text-muted-foreground">Order: {link.display_order + 1}</span>
         </div>
       </div>
       <div className="flex items-center gap-2">

@@ -34,9 +34,8 @@ export interface LinkFormData {
   url: string;
   icon_type: IconType;
   is_visible: boolean;
-  display_order: number;
-  group_title: string;
-  group_order: number;
+  display_order: number | undefined;
+
 }
 
 export function useLinks(): UseLinksReturn {
@@ -208,7 +207,17 @@ export function useLinks(): UseLinksReturn {
 
   const reorderLinks = useCallback(
     async (reorderedLinks: LinkType[]) => {
-      setLinks(reorderedLinks);
+      // Update local state: replace links for the affected section, keep others
+      if (reorderedLinks.length > 0) {
+        const sectionId = reorderedLinks[0].section_id;
+        setLinks((prev) => {
+          const otherLinks = prev.filter((l) => l.section_id !== sectionId);
+          return [...otherLinks, ...reorderedLinks].sort((a, b) => {
+            if (a.section_id !== b.section_id) return a.section_id - b.section_id;
+            return a.display_order - b.display_order;
+          });
+        });
+      }
 
       for (let i = 0; i < reorderedLinks.length; i++) {
         const link = reorderedLinks[i];

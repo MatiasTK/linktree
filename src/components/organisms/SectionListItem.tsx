@@ -24,7 +24,7 @@ export function SectionListItem({
         <p className="text-sm text-muted-foreground">/{section.slug}</p>
       </div>
       <span className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded">
-        Order: {section.display_order}
+        Order: {section.display_order + 1}
       </span>
       <div className="flex items-center gap-2">
         <IconButton

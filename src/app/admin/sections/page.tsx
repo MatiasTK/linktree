@@ -14,7 +14,7 @@ const initialFormData: SectionFormData = {
   title: '',
   slug: '',
   show_in_main: true,
-  display_order: 0,
+  display_order: undefined,
   description: '',
   profile_initial: '',
   profile_image_url: '',
@@ -79,6 +79,7 @@ export default function SectionsPage() {
       success = await createSection(formData, true);
     }
 
+    clearSwapWarning();
     if (success) {
       formModal.close();
       setFormData(initialFormData);

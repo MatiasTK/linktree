@@ -2,6 +2,7 @@ import { EmptyState } from '@/components/molecules';
 import { ProfileHeader, SectionCard } from '@/components/organisms';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { sectionsService, settingsService } from '@/services';
+import { Code } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -50,15 +51,16 @@ export default async function HomePage() {
         </div>
 
         <footer className="mt-12 text-center text-sm text-muted-foreground">
-          <p>
-            Powered by{' '}
+          <p className="flex items-center justify-center gap-1">
+            Made by
             <a
-              href="https://pages.cloudflare.com"
+              href="https://github.com/MatiasTK"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              className="text-primary hover:underline flex items-center gap-1"
             >
-              Cloudflare Pages
+            <Code size={16} className="text-primary" />
+              MatiasTK
             </a>
           </p>
         </footer>

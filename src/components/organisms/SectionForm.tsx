@@ -72,9 +72,10 @@ export function SectionForm({
         <FormField label="Display Order">
           <Input
             type="number"
-            value={formData.display_order}
-            onChange={(e) => onChange({ display_order: parseInt(e.target.value) || 0 })}
-            min={0}
+            value={formData.display_order !== undefined ? formData.display_order + 1 : ''}
+            onChange={(e) => onChange({ display_order: e.target.value === '' ? undefined : parseInt(e.target.value) - 1 })}
+            min={1}
+            placeholder="Auto (último)"
           />
         </FormField>
       </div>

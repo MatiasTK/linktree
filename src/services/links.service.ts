@@ -2,9 +2,10 @@ import { execute, query, queryFirst } from '@/lib/db';
 import type { Link } from '@/lib/types';
 import {
   type ServiceResult,
-  handleDisplayOrderSwap,
-  buildAndExecuteUpdate,
   boolToInt,
+  buildAndExecuteUpdate,
+  handleDisplayOrderSwap,
+  shiftDisplayOrdersForInsert,
 } from './base.service';
 
 // ============================================================================
@@ -23,8 +24,7 @@ export interface CreateLinkData {
   icon_type?: string;
   is_visible?: boolean;
   display_order?: number;
-  group_title?: string | null;
-  group_order?: number;
+
 }
 
 export interface UpdateLinkData {
@@ -33,8 +33,7 @@ export interface UpdateLinkData {
   icon_type?: string;
   is_visible?: boolean;
   display_order?: number;
-  group_title?: string | null;
-  group_order?: number;
+
 }
 
 // ============================================================================
@@ -97,18 +96,28 @@ export const linksService = {
    */
   async create(data: CreateLinkData): Promise<ServiceResult<Link>> {
     try {
+      // Auto-calculate display_order if not provided, otherwise shift existing items
+      let displayOrder = data.display_order;
+      if (displayOrder === undefined) {
+        const maxResult = await queryFirst<{ max_order: number }>(
+          'SELECT COALESCE(MAX(display_order), -1) as max_order FROM links WHERE section_id = ?',
+          [data.section_id]
+        );
+        displayOrder = (maxResult?.max_order ?? -1) + 1;
+      } else {
+        await shiftDisplayOrdersForInsert({ table: 'links', displayOrder, sectionId: data.section_id });
+      }
+
       const result = await execute(
-        `INSERT INTO links (section_id, label, url, icon_type, is_visible, display_order, group_title, group_order)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO links (section_id, label, url, icon_type, is_visible, display_order)
+         VALUES (?, ?, ?, ?, ?, ?)`,
         [
           data.section_id,
           data.label,
           data.url,
           data.icon_type ?? 'link',
           boolToInt(data.is_visible ?? true),
-          data.display_order ?? 0,
-          data.group_title ?? null,
-          data.group_order ?? 0,
+          displayOrder,
         ]
       );
 
@@ -163,8 +172,7 @@ export const linksService = {
           { field: 'icon_type', column: 'icon_type' },
           { field: 'is_visible', column: 'is_visible', transform: boolToInt },
           { field: 'display_order', column: 'display_order' },
-          { field: 'group_title', column: 'group_title' },
-          { field: 'group_order', column: 'group_order' },
+
         ],
       });
 
@@ -190,7 +198,13 @@ export const linksService = {
         return { success: false, error: 'Link not found', status: 404 };
       }
 
+      const deletedOrder = existing.display_order;
+      const sectionId = existing.section_id;
       await execute('DELETE FROM links WHERE id = ?', [id]);
+      await execute(
+        'UPDATE links SET display_order = display_order - 1, updated_at = CURRENT_TIMESTAMP WHERE section_id = ? AND display_order > ?',
+        [sectionId, deletedOrder]
+      );
       return { success: true, data: { deleted: true } };
     } catch (error) {
       console.error('Error deleting link:', error);
@@ -232,7 +246,7 @@ export const linksService = {
   async getVisibleBySection(sectionId: number): Promise<Link[]> {
     try {
       return await query<Link>(
-        'SELECT * FROM links WHERE section_id = ? AND is_visible = 1 ORDER BY group_order ASC, display_order ASC',
+        'SELECT * FROM links WHERE section_id = ? AND is_visible = 1 ORDER BY display_order ASC',
         [sectionId]
       );
     } catch (error) {
