@@ -50,3 +50,11 @@ next-env.d.ts
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# impeccable working material (screenshots, sketches, mocks); briefs and design.json stay tracked
+/.impeccable/review/
+/.impeccable/sketches/
+/.impeccable/reference/
+/.impeccable/mocks/
+/.impeccable/questions/
+/.impeccable/hook.cache.json

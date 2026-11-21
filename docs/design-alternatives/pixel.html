@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Píxel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Inter+Tight:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f4f0;--ink:#16161a;--blue:#4a5cff;--pink:#ff4d6d;--gold:#ffc83d;--mint:#2bd4a4;--px:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1440px;height:900px;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:"Inter Tight",sans-serif;position:relative;
+ background-image:linear-gradient(rgba(22,22,26,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(22,22,26,.05) 1px,transparent 1px);background-size:var(--px) var(--px)}
+.top{position:absolute;left:80px;right:80px;top:40px;display:flex;justify-content:space-between;font:400 13px "JetBrains Mono";color:#6c6c68}
+.left{position:absolute;left:80px;top:150px;width:600px}
+.left small{font:700 16px "Silkscreen";color:var(--blue)}
+.left h1{font:700 128px/0.95 "Silkscreen";letter-spacing:-.02em;margin:16px 0 26px;text-shadow:8px 8px 0 var(--gold)}
+.left p{font:400 22px/1.45 "Inter Tight";color:#3c3c38;max-width:440px}
+.lives{position:absolute;left:80px;bottom:72px;display:flex;gap:28px;font:400 13px "JetBrains Mono";color:#6c6c68;align-items:center}
+.lives svg{vertical-align:middle;margin-right:8px}
+.col{position:absolute;right:80px;top:140px;width:560px;display:grid;gap:22px}
+.btn{height:120px;position:relative;display:grid;grid-template-columns:88px 1fr auto;align-items:center;gap:22px;padding:0 30px 0 26px;background:#fff;
+ clip-path:polygon(0 8px,8px 8px,8px 0,calc(100% - 8px) 0,calc(100% - 8px) 8px,100% 8px,100% calc(100% - 8px),calc(100% - 8px) calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,8px calc(100% - 8px),0 calc(100% - 8px));
+ box-shadow:inset 0 0 0 4px var(--ink),inset 0 -12px 0 rgba(22,22,26,.08)}
+.btn b{font:700 34px "Inter Tight";letter-spacing:-.02em}
+.btn small{display:block;font:400 13px "JetBrains Mono";color:#6c6c68;margin-top:4px}
+.btn .k{font:700 18px "Silkscreen"}
+.btn.on{background:var(--gold);box-shadow:inset 0 0 0 4px var(--ink),inset 0 -12px 0 rgba(0,0,0,.12)}
+svg.ic{image-rendering:pixelated;shape-rendering:crispEdges}
+.shadow{position:absolute;inset:0}
+</style></head><body>
+<div class="top"><span>matiastk / links</span><span>1P · NIVEL 2026</span></div>
+<div class="left">
+ <small>PLAYER 1</small>
+ <h1>MATÍAS</h1>
+ <p>Ingeniero de software. Elegí una sección para empezar.</p>
+</div>
+<div class="lives">
+ <span><svg width="24" height="24" viewBox="0 0 8 8" class="ic"><path fill="#ff4d6d" d="M1 1h2v1h2V1h2v1h1v2H7v1H6v1H5v1H3V6H2V5H1V4H0V2h1z"/></svg>15 links</span>
+ <span><svg width="24" height="24" viewBox="0 0 8 8" class="ic"><path fill="#2bd4a4" d="M3 0h2v3h3v2H5v3H3V5H0V3h3z"/></svg>hecho por MatiasTK</span>
+</div>
+<div class="col">
+ <div class="btn on"><svg class="ic" width="88" height="88" viewBox="0 0 11 11"><rect width="11" height="11" fill="#16161a"/><path fill="#ffc83d" d="M2 3h1v1H2zM3 4h1v1H3zM2 5h1v1H2zM5 6h4v1H5z"/></svg><div><b>Proyectos</b><small>6 links · /projects</small></div><span class="k">▶ 1</span></div>
+ <div class="btn"><svg class="ic" width="88" height="88" viewBox="0 0 11 11"><rect width="11" height="11" fill="#4a5cff"/><path fill="#fff" d="M2 3h7v5H2zM3 4h1v1H3zM4 5h3v1H4zM7 4h1v1H7z" fill-rule="evenodd"/></svg><div><b>Contacto</b><small>3 links · /contact</small></div><span class="k">2</span></div>
+ <div class="btn"><svg class="ic" width="88" height="88" viewBox="0 0 11 11"><rect width="11" height="11" fill="#ff4d6d"/><path fill="#fff" d="M2 5h2v2H2zM7 2h2v2H7zM7 7h2v2H7zM4 5h1v1H4zM5 4h1v1H5zM6 3h1v1H6zM5 6h1v1H5zM6 7h1v1H6z"/></svg><div><b>Redes</b><small>4 links · /social</small></div><span class="k">3</span></div>
+ <div class="btn"><svg class="ic" width="88" height="88" viewBox="0 0 11 11"><rect width="11" height="11" fill="#2bd4a4"/><path fill="#16161a" d="M7 2h2v2H7zM6 4h2v1H6zM5 5h2v1H5zM4 6h2v1H4zM3 7h2v1H3zM2 8h2v1H2z"/></svg><div><b>Escritos</b><small>2 links · /writing</small></div><span class="k">4</span></div>
+</div>
+</body></html>

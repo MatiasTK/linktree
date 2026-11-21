@@ -36,20 +36,20 @@ export default async function AdminDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <StatCard
-          icon={<Layers className="text-blue-500" size={20} />}
-          iconBgClass="bg-blue-500/10"
+          icon={<Layers size={20} />}
+          iconBgClass="bg-secondary text-foreground"
           label="Sections"
           value={stats.sectionsCount}
         />
         <StatCard
-          icon={<Link2 className="text-green-500" size={20} />}
-          iconBgClass="bg-green-500/10"
+          icon={<Link2 size={20} />}
+          iconBgClass="bg-secondary text-foreground"
           label="Links"
           value={stats.linksCount}
         />
         <StatCard
-          icon={<MousePointerClick className="text-purple-500" size={20} />}
-          iconBgClass="bg-purple-500/10"
+          icon={<MousePointerClick size={20} />}
+          iconBgClass="bg-secondary text-foreground"
           label="Total Clicks"
           value={stats.totalClicks}
         />

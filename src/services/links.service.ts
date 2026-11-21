@@ -256,6 +256,22 @@ export const linksService = {
   },
 
   /**
+   * Count visible links per section in one query.
+   * Used by the home page to label each section key.
+   */
+  async countVisibleBySection(): Promise<Record<number, number>> {
+    try {
+      const rows = await query<{ section_id: number; total: number }>(
+        'SELECT section_id, COUNT(*) as total FROM links WHERE is_visible = 1 GROUP BY section_id'
+      );
+      return Object.fromEntries(rows.map((r) => [r.section_id, r.total]));
+    } catch (error) {
+      console.error('Error counting links:', error);
+      return {};
+    }
+  },
+
+  /**
    * Get all links (no error wrapper, returns empty array on error)
    * Used for dashboard stats
    */

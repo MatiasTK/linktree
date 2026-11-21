@@ -42,6 +42,9 @@ export function validateUrl(url: string): string | null {
   }
 }
 
+/** Paths owned by fixed routes; a section with one of these slugs would be unreachable. */
+export const RESERVED_SLUGS = ['admin', 'login', 'api', 'keys', 'sounds', 'type'];
+
 /**
  * Validate and sanitize a slug
  * Only allows lowercase letters, numbers, and hyphens
@@ -214,6 +217,9 @@ export function validateSectionData(data: Record<string, unknown>): ValidationRe
     const slug = validateSlug(data.slug as string);
     if (slug === null) {
       return { success: false, error: 'Invalid slug. Use only lowercase letters, numbers, and hyphens.' };
+    }
+    if (RESERVED_SLUGS.includes(slug)) {
+      return { success: false, error: `"${slug}" is used by the site itself. Pick another slug.` };
     }
     result.slug = slug;
   }

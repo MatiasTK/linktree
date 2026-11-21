@@ -9,15 +9,12 @@ export function AdminSidebar() {
   return (
     <aside className="w-64 bg-card border-r border-border p-4 flex flex-col">
       <div className="mb-8">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary border border-border hover:bg-accent text-muted-foreground hover:text-foreground transition-all duration-200 hover:scale-105 group"
-        >
-          <Home size={16} className="group-hover:scale-110 transition-transform" />
-          <span className="text-sm font-medium">Back to Site</span>
+        <Link href="/" className="keycap text-sm">
+          <Home size={16} aria-hidden />
+          <span className="font-sans font-semibold">View site</span>
         </Link>
-        <h1 className="text-xl font-bold mt-4 gradient-text">Admin Panel</h1>
-        <p className="text-sm text-muted-foreground">Manage your links</p>
+        <h1 className="text-2xl font-extrabold tracking-tight mt-6">Admin</h1>
+        <p className="text-sm text-muted-foreground">Sections, links and settings</p>
       </div>
 
       <nav className="space-y-1 flex-1">

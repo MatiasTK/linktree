@@ -1,0 +1,20 @@
+Key sounds in this folder are recordings from Monkeytype
+https://github.com/monkeytypegame/monkeytype (frontend/static/sounds)
+Licensed under the GNU General Public License v3.0.
+
+Converted to mono, trimmed, 5 variants per set:
+  plain/   <- click21  "cherrymx blue pbt"
+  accent/  <- click23  "kailh box white"
+  mod/     <- click19  "cherrymx black pbt"
+  small/   <- click4   "nk creams"
+
+Switch tester sets (loaded only on /keys):
+  blue-abs/       <- click20  "cherrymx blue abs"
+  black-abs/      <- click18  "cherrymx black abs"
+  brown-pbt/      <- click22  "cherrymx brown pbt"
+  razer-green/    <- click24  "razer green"
+  tealios-v2/     <- click25  "tealios v2"
+  akko-lavender/  <- click17  "akko lavenders"
+  typewriter/     <- click5   "typewriter"
+  rubber-dome/    <- click15  "rubber keys"
+  trust-gxt/      <- click26  "trust gxt"
