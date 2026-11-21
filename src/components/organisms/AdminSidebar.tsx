@@ -2,7 +2,7 @@
 
 import { LogoutButton } from '@/components/LogoutButton';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Home, Layers, LayoutDashboard, Link2, Settings } from 'lucide-react';
+import { Briefcase, Home, Layers, LayoutDashboard, Link2, Settings } from 'lucide-react';
 import Link from 'next/link';
 
 export function AdminSidebar() {
@@ -14,7 +14,7 @@ export function AdminSidebar() {
           <span className="font-sans font-semibold">View site</span>
         </Link>
         <h1 className="text-2xl font-extrabold tracking-tight mt-6">Admin</h1>
-        <p className="text-sm text-muted-foreground">Sections, links and settings</p>
+        <p className="text-sm text-muted-foreground">Sections, links, portfolio and settings</p>
       </div>
 
       <nav className="space-y-1 flex-1">
@@ -38,6 +38,13 @@ export function AdminSidebar() {
         >
           <Link2 size={18} />
           <span>Links</span>
+        </Link>
+        <Link
+          href="/admin/portfolio"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
+        >
+          <Briefcase size={18} />
+          <span>Portfolio</span>
         </Link>
         <Link
           href="/admin/settings"

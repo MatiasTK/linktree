@@ -66,6 +66,7 @@ RESTful design in `src/app/api/`:
 - `sections/` - Sections CRUD
 - `links/` - Links CRUD + click tracking
 - `settings/` - Global settings key-value store
+- `projects/` - Portfolio projects CRUD + `reorder`
 
 ### Database Schema
 
@@ -73,3 +74,10 @@ RESTful design in `src/app/api/`:
 - **links**: icon, URL, click count, group, order
 - **settings**: key-value store
 - **login_attempts**: rate limiting
+- **projects**: portfolio projects (bilingual `_en`/`_es` text, stack, image/site/repo URLs, order, visibility)
+
+### Portfolio
+
+- `/portfolio` and `/portfolio/[slug]`: ES/EN via `?lang=` (falls back to Accept-Language)
+- Projects live in D1 (`migrations/0007_portfolio.sql`, edited in `/admin/portfolio`); profile, experience, stack and education live in `src/content/portfolio.ts`
+- `portfolio` is a reserved slug (`RESERVED_SLUGS` in `src/lib/validation.ts`)

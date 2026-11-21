@@ -43,7 +43,7 @@ export function validateUrl(url: string): string | null {
 }
 
 /** Paths owned by fixed routes; a section with one of these slugs would be unreachable. */
-export const RESERVED_SLUGS = ['admin', 'login', 'api', 'keys', 'sounds', 'type'];
+export const RESERVED_SLUGS = ['admin', 'login', 'api', 'keys', 'sounds', 'type', 'portfolio'];
 
 /**
  * Validate and sanitize a slug
@@ -300,4 +300,103 @@ export function validateSettingsData(data: Record<string, unknown>): ValidationR
   }
 
   return { success: true, data: result };
+}
+
+const PROJECT_TEXT_FIELDS = {
+  name: 80,
+  year: 20,
+  kind_en: 80,
+  kind_es: 80,
+  summary_en: 300,
+  summary_es: 300,
+  body_en: 6000,
+  body_es: 6000,
+  stack: 300,
+} as const;
+
+export interface ProjectInput {
+  slug?: string;
+  name?: string;
+  year?: string | null;
+  kind_en?: string;
+  kind_es?: string;
+  summary_en?: string;
+  summary_es?: string;
+  body_en?: string;
+  body_es?: string;
+  stack?: string;
+  image_url?: string | null;
+  site_url?: string | null;
+  repo_url?: string | null;
+  is_visible?: boolean;
+  display_order?: number;
+}
+
+/**
+ * Validate portfolio project create/update data. Only keys present in `data` are returned.
+ */
+export function validateProjectData(data: Record<string, unknown>): ValidationResult<ProjectInput> {
+  const result: Record<string, unknown> = {};
+
+  if ('slug' in data) {
+    const slug = validateSlug(data.slug as string);
+    if (slug === null) {
+      return { success: false, error: 'Invalid slug. Use only lowercase letters, numbers, and hyphens.' };
+    }
+    result.slug = slug;
+  }
+
+  for (const [field, max] of Object.entries(PROJECT_TEXT_FIELDS)) {
+    if (field in data) {
+      result[field] = sanitizeString(data[field], max);
+    }
+  }
+
+  if ('name' in result && (result.name as string).length === 0) {
+    return { success: false, error: 'Name is required' };
+  }
+  if ('year' in result) {
+    result.year = (result.year as string) || null;
+  }
+  if ('stack' in result) {
+    result.stack = (result.stack as string)
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .join(', ');
+  }
+
+  if ('image_url' in data) {
+    const raw = typeof data.image_url === 'string' ? data.image_url.trim() : '';
+    if (raw) {
+      const valid = validateImageUrl(raw);
+      if (valid === null) return { success: false, error: 'Invalid image URL. Must be a valid HTTPS URL.' };
+      result.image_url = valid;
+    } else {
+      result.image_url = null;
+    }
+  }
+
+  for (const field of ['site_url', 'repo_url'] as const) {
+    if (field in data) {
+      const raw = typeof data[field] === 'string' ? (data[field] as string).trim() : '';
+      if (raw) {
+        const valid = validateUrl(raw);
+        if (valid === null) return { success: false, error: `Invalid ${field === 'site_url' ? 'site' : 'repository'} URL.` };
+        result[field] = valid;
+      } else {
+        result[field] = null;
+      }
+    }
+  }
+
+  if ('is_visible' in data) {
+    result.is_visible = Boolean(data.is_visible);
+  }
+
+  if ('display_order' in data) {
+    result.display_order = validatePositiveInt(data.display_order);
+  }
+
+  return { success: true, data: result as ProjectInput };
 }

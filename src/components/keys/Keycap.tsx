@@ -17,6 +17,7 @@ interface KeycapProps {
   external?: boolean;
   /** link id for click tracking */
   linkId?: number;
+  className?: string;
 }
 
 function ArrowGlyph({ external }: { external?: boolean }) {
@@ -27,13 +28,14 @@ function ArrowGlyph({ external }: { external?: boolean }) {
   );
 }
 
-export function Keycap({ index, label, meta, tone = 'plain', icon, href, external, linkId }: KeycapProps) {
+export function Keycap({ index, label, meta, tone = 'plain', icon, href, external, linkId, className: extraClass }: KeycapProps) {
   const shortcut = index <= 9 ? String(index) : undefined;
   const className = cn(
     'key',
     tone === 'accent' && 'key--accent',
     tone === 'mod' && 'key--mod',
     external && 'key--link',
+    extraClass,
   );
   const style = { '--i': index - 1 } as CSSProperties;
 

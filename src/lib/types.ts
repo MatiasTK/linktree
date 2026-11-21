@@ -129,3 +129,26 @@ export const AVAILABLE_ICONS = [
 ] as const;
 
 export type IconType = typeof AVAILABLE_ICONS[number];
+
+// Portfolio project (text fields come in _en / _es pairs)
+export interface Project {
+  id: number;
+  slug: string;
+  name: string;
+  year: string | null;
+  kind_en: string;
+  kind_es: string;
+  summary_en: string;
+  summary_es: string;
+  body_en: string;
+  body_es: string;
+  /** comma-separated */
+  stack: string;
+  image_url: string | null;
+  site_url: string | null;
+  repo_url: string | null;
+  is_visible: number; // 0 or 1
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}

@@ -1,5 +1,5 @@
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Code, Gamepad2, Keyboard } from 'lucide-react';
+import { Briefcase, Code, Gamepad2, Keyboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
@@ -61,6 +61,10 @@ export function Deck({
           <span className="truncate">{path}</span>
         </div>
         <div className="flex items-center gap-2">
+          <Link href="/portfolio" className="keycap" aria-label="Portfolio: experience and projects" title="Portfolio">
+            <Briefcase className="w-4 h-4" aria-hidden />
+            <span className="hidden sm:inline font-sans">Portfolio</span>
+          </Link>
           {!hideTypeLink && (
             <Link href="/type" className="keycap" aria-label="Speed typing: how fast can you type?" title="Speed typing">
               <Gamepad2 className="w-4 h-4" aria-hidden />

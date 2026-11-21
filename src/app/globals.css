@@ -1856,3 +1856,953 @@ button.key.key--next {
 .tr:focus {
   outline: none;
 }
+
+/* ==========================================================================
+   Portfolio (/portfolio, /portfolio/<slug>): the developer as a spec sheet.
+   Name and actions on the left, the sheet on a plate on the right, the
+   projects as a row of keys inside the fold; then the long read.
+   ========================================================================== */
+
+.pf {
+  --pf-gap: clamp(56px, 7vw, 104px);
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px 16px 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pf-bar {
+  margin-bottom: 32px;
+}
+
+.pf-hero {
+  display: grid;
+  gap: 32px;
+}
+
+.pf-name {
+  font-weight: 800;
+  font-size: clamp(3.5rem, 1.6rem + 6.2vw, 6rem);
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.pf-thesis {
+  margin-top: 20px;
+  font-size: clamp(1.125rem, 0.9rem + 0.7vw, 1.375rem);
+  line-height: 1.45;
+  max-width: 34ch;
+  color: color-mix(in oklab, var(--foreground) 80%, var(--background));
+  text-wrap: pretty;
+}
+
+.pf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 12px;
+  margin-top: 28px;
+}
+
+/* action keys: same cap, face and skirt as the board keys, at button height */
+.key.pf-act {
+  min-height: 0;
+  border-radius: 14px;
+  padding-bottom: 6px;
+}
+
+.key.pf-act .key__cap {
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+}
+
+.key.pf-act:active,
+.key.pf-act[data-pressed] {
+  --travel: 5px;
+}
+
+.pf-act__icon,
+.pf-act__arrow {
+  flex: none;
+  color: var(--legend);
+}
+
+.pf-act__label {
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* the spec sheet: a recessed sheet on a plate */
+.board.pf-spec {
+  grid-template-columns: 1fr;
+  align-self: start;
+}
+
+.pf-sheet {
+  border-radius: 20px;
+  background: var(--card);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.06);
+  padding: 4px 20px 8px;
+}
+
+.pf-sheet__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0 10px;
+  border-bottom: 2px solid var(--foreground);
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+.pf-sheet__head h2 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.pf-sheet__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pf-sheet__row:last-child {
+  border-bottom: 0;
+}
+
+.pf-sheet__row dt,
+.pf-stack dt {
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+.pf-sheet__row dd {
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+}
+
+.pf-sheet__links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pf-sheet__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 14px;
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 560px) {
+  .pf-sheet__row {
+    grid-template-columns: 9.5rem 1fr;
+    gap: 16px;
+    align-items: baseline;
+  }
+}
+
+/* the work, inside the fold */
+.pf-strip {
+  margin-top: 40px;
+}
+
+.pf-label {
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  margin: 0 0 12px 4px;
+}
+
+.board.pf-strip__board {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .board.pf-strip__board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .board.pf-strip__board {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 16px;
+    gap: 16px;
+  }
+}
+
+.key.pf-strip__key {
+  min-height: 84px;
+}
+
+.key.pf-strip__key .key__cap {
+  min-height: 74px;
+  padding: 14px 18px;
+}
+
+.key.pf-strip__key .key__meta {
+  white-space: normal;
+}
+
+.key.pf-strip__key .key__label {
+  font-size: clamp(1.375rem, 1.1rem + 0.7vw, 1.75rem);
+}
+
+@media (min-width: 640px) {
+  .key.pf-strip__key {
+    min-height: 112px;
+  }
+  .key.pf-strip__key .key__cap {
+    min-height: 100px;
+    padding: 16px 20px;
+  }
+}
+
+/* the long read */
+.pf-section {
+  margin-top: var(--pf-gap);
+}
+
+.pf-h2 {
+  font-weight: 800;
+  font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  margin-bottom: 24px;
+}
+
+.pf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.pf-chips li {
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+/* projects: one plate each, the capture in a recessed well */
+.pf-projects {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 1024px) {
+  .pf-projects {
+    gap: 28px;
+  }
+}
+
+.board.pf-project {
+  grid-template-columns: 1fr;
+  align-content: start;
+  gap: 18px;
+}
+
+@media (min-width: 900px) {
+  .board.pf-project {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: center;
+    gap: clamp(24px, 3vw, 48px);
+    padding: 18px;
+  }
+  .pf-project .pf-project__text {
+    padding: 22px 16px 22px 0;
+  }
+  /* the well fills the plate's height, so both halves share the plate's one margin */
+  .pf-project__shot {
+    align-self: stretch;
+  }
+  .pf-project__shot .pf-shot {
+    height: 100%;
+    min-height: 220px;
+    aspect-ratio: auto;
+  }
+}
+
+.pf-project__shot {
+  display: block;
+  border-radius: 18px;
+}
+
+.pf-shot {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--plate-lo);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.14);
+}
+
+.pf-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 400ms var(--ease-out);
+}
+
+.pf-shot--empty {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  aspect-ratio: 16 / 7;
+}
+
+.pf-shot--empty span {
+  font-weight: 800;
+  font-size: clamp(2rem, 1.2rem + 3vw, 3.5rem);
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  text-align: center;
+  color: color-mix(in oklab, var(--foreground) 24%, transparent);
+}
+
+@media (hover: hover) {
+  .pf-project:hover .pf-shot img {
+    transform: scale(1.02);
+  }
+}
+
+.pf-project__text {
+  padding: 0 8px 8px;
+}
+
+.pf-project__meta {
+  margin-top: 8px;
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+.pf-project__name {
+  font-weight: 800;
+  font-size: clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.pf-project__name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.pf-project__name a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+.pf-project__summary {
+  margin-top: 14px;
+  font-size: 17px;
+  line-height: 1.5;
+  max-width: 48ch;
+  color: color-mix(in oklab, var(--foreground) 82%, var(--background));
+}
+
+.pf-project__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+a.keycap.pf-pill {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 0 14px;
+  gap: 6px;
+}
+
+/* how I work */
+.pf-how {
+  display: grid;
+  gap: 28px;
+}
+
+.pf-how > div {
+  padding-top: 16px;
+  border-top: 2px solid var(--foreground);
+}
+
+.pf-how h3 {
+  font-weight: 800;
+  font-size: 1.375rem;
+  letter-spacing: -0.02em;
+}
+
+.pf-how p {
+  margin-top: 8px;
+  font-size: 17px;
+  line-height: 1.55;
+  max-width: 46ch;
+  color: color-mix(in oklab, var(--foreground) 82%, var(--background));
+}
+
+@media (min-width: 900px) {
+  .pf-how {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+  }
+}
+
+/* stack and education */
+.pf-split {
+  display: grid;
+  gap: var(--pf-gap);
+}
+
+@media (min-width: 1024px) {
+  .pf-split {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(48px, 6vw, 96px);
+  }
+}
+
+.pf-stack > div {
+  display: grid;
+  gap: 4px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pf-stack > div:first-child {
+  border-top: 2px solid var(--foreground);
+}
+
+.pf-stack dd {
+  font-size: 18px;
+  line-height: 1.45;
+}
+
+@media (min-width: 560px) {
+  .pf-stack > div {
+    grid-template-columns: 9.5rem 1fr;
+    gap: 16px;
+    align-items: baseline;
+  }
+}
+
+.pf-edu {
+  list-style: none;
+  padding: 0;
+  border-top: 2px solid var(--foreground);
+}
+
+.pf-edu li {
+  display: grid;
+  gap: 2px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pf-edu strong {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.pf-edu strong a {
+  color: inherit;
+}
+
+.pf-edu span {
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+/* the closing board */
+.board.pf-contact {
+  margin-top: var(--pf-gap);
+  grid-template-columns: 1fr;
+  gap: 24px;
+  padding: 24px 20px;
+}
+
+.pf-contact__title {
+  font-weight: 800;
+  font-size: clamp(2.5rem, 1.5rem + 3.4vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.pf-contact p {
+  margin-top: 12px;
+  font-size: 18px;
+  line-height: 1.5;
+  max-width: 44ch;
+  color: color-mix(in oklab, var(--foreground) 82%, var(--background));
+}
+
+.key.pf-act--wide {
+  justify-self: start;
+  max-width: 100%;
+}
+
+.key.pf-act--wide .pf-act__label {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 1024px) {
+  .board.pf-contact {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 40px 44px;
+  }
+}
+
+.pf-hint {
+  margin-top: 48px;
+}
+
+.pf-footer {
+  margin-top: 32px;
+  align-self: center;
+}
+
+/* case page */
+.pf-name--case {
+  font-size: clamp(3rem, 1.6rem + 5vw, 6rem);
+}
+
+.board.pf-case-shot {
+  margin-top: 48px;
+  grid-template-columns: 1fr;
+}
+
+.pf-case-shot .pf-shot {
+  aspect-ratio: 16 / 9;
+}
+
+.pf-case-body {
+  max-width: 68ch;
+}
+
+.pf-prose {
+  font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--foreground) 88%, var(--background));
+}
+
+.pf-prose > * + * {
+  margin-top: 1.1em;
+}
+
+.pf-prose ul {
+  list-style: disc;
+  padding-left: 1.2em;
+}
+
+.pf-prose li + li {
+  margin-top: 0.45em;
+}
+
+.pf-prose li::marker {
+  color: var(--primary-ink);
+}
+
+.pf-next {
+  margin-top: var(--pf-gap);
+}
+
+.board.pf-next__board {
+  grid-template-columns: 1fr;
+  max-width: 560px;
+}
+
+@media (min-width: 1024px) {
+  .pf {
+    padding: 40px clamp(40px, 5.5vw, 80px);
+  }
+
+  .pf-hero {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+    column-gap: clamp(48px, 6vw, 96px);
+    align-items: center;
+  }
+
+  .board.pf-spec {
+    padding: 16px;
+  }
+
+  .pf-hint {
+    display: flex;
+  }
+}
+
+/* phones: the breadcrumb keeps the handle whole; action rows are laid out, not wrapped */
+@media (max-width: 419px) {
+  .pf-crumb {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .pf-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pf-actions .key--accent {
+    grid-column: 1 / -1;
+  }
+  .key.pf-act .key__cap {
+    justify-content: center;
+  }
+  .pf-project__links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pf-project__links > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* section anchors: land with breathing room, no focus ring on the section itself */
+
+.pf section[tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* section navigation: the bar sticks to the top when it carries the section links */
+.pf-bar--sticky {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  margin-top: -16px;
+  margin-bottom: 16px;
+  padding: 16px 0;
+}
+
+/* full-bleed backing for the stuck bar; the page clips the overflow sideways, so menus can still drop below */
+body:has(.pf) {
+  overflow-x: clip;
+}
+
+.pf-bar--sticky::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 -100vmax;
+  background: var(--background);
+}
+
+.pf-bar--sticky::after {
+  content: "";
+  position: absolute;
+  left: -100vmax;
+  right: -100vmax;
+  bottom: 0;
+  height: 1px;
+  background: var(--border);
+  opacity: 0;
+  transition: opacity 200ms var(--ease-out);
+}
+
+[data-pf-scrolled] .pf-bar--sticky::after {
+  opacity: 1;
+}
+
+.pf section[id] {
+  scroll-margin-top: 104px;
+}
+
+/* section links in the sticky bar; the current one is set in full ink with an orange underline */
+.pf-nav {
+  display: none;
+  margin-left: 20px;
+  padding-left: 20px;
+  border-left: 1px solid var(--border);
+}
+
+@media (min-width: 1024px) {
+  .pf-nav {
+    display: block;
+  }
+}
+
+.pf-nav ol {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.pf-nav__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--muted-foreground);
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  transition: color 150ms var(--ease-out);
+}
+
+/* the underline: a 2px rounded bar under the word, drawn left to right when the section changes */
+.pf-nav__link::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--primary);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 260ms var(--ease-out);
+}
+
+.pf-nav__link[aria-current] {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.pf-nav__link[aria-current]::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) {
+  .pf-nav__link:hover {
+    color: var(--foreground);
+  }
+}
+
+.pf-nav__link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-nav__link,
+  .pf-nav__link::after,
+  .pf-bar--sticky::after {
+    transition: none;
+  }
+}
+
+/* the first screen ends cleanly on the project row, so the next heading never sits cut at the fold */
+@media (min-width: 1024px) and (min-height: 760px) {
+  .pf-first {
+    /* leaves a band at the bottom where the next section's heading and first lines show whole */
+    min-height: calc(100svh - 116px - 220px);
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 40px;
+  }
+  .pf-first .pf-hero {
+    flex: 1;
+    align-content: center;
+  }
+}
+
+/* with the rail beside the page, the hero gives the name column a little more room
+   and the keys tighten so the three actions and the project names stay on one line */
+@media (min-width: 1280px) {
+  .pf-hero {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    column-gap: 48px;
+  }
+  .pf-actions {
+    gap: 10px;
+  }
+  .key.pf-act .key__cap {
+    gap: 8px;
+    padding: 12px 14px;
+  }
+  .pf-act__label {
+    font-size: 16px;
+  }
+  .pf-act__icon,
+  .pf-act__arrow {
+    width: 16px;
+    height: 16px;
+  }
+  .pf-sheet__row {
+    grid-template-columns: 8.25rem 1fr;
+    padding: 10px 0;
+  }
+  .pf-sheet__row dd {
+    font-size: 16px;
+  }
+  .key.pf-strip__key .key__label {
+    font-size: clamp(1.25rem, 0.6rem + 0.9vw, 1.625rem);
+  }
+}
+
+/* ==========================================================================
+   Experience: the role under the name, the detail first after the opening screen
+   ========================================================================== */
+
+/* the role as the hero's second line */
+.pf-now {
+  margin-top: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.pf-now__role {
+  font-size: clamp(1.375rem, 1rem + 1.2vw, 1.875rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.pf-now__role strong {
+  white-space: nowrap;
+  font-weight: 800;
+  /* an accent, not a link: one continuous line that passes under the descenders */
+  text-decoration: underline;
+  text-decoration-color: var(--primary);
+  text-decoration-thickness: 3px;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 0.3em;
+}
+
+.pf-now__meta {
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+.pf-now + .pf-thesis {
+  margin-top: 16px;
+}
+
+/* below the opening screen: the experience in full */
+.pf-xlist {
+  list-style: none;
+  padding: 0;
+}
+
+.pf-xlist__item {
+  display: grid;
+  gap: 8px;
+  padding-top: 18px;
+  border-top: 2px solid var(--foreground);
+}
+
+.pf-xlist__body {
+  margin-top: 14px;
+}
+
+@media (min-width: 900px) {
+  .pf-xlist__item {
+    grid-template-columns: 14rem 1fr;
+    gap: 32px;
+  }
+  .pf-xlist__item .pf-role__when {
+    padding-top: 10px;
+  }
+}
+
+.pf-role__when {
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+.pf-role__company {
+  font-weight: 800;
+  font-size: clamp(1.875rem, 1.4rem + 1.4vw, 2.5rem);
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.pf-role__title {
+  margin-top: 8px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.pf-role__body {
+  font-size: 17px;
+  line-height: 1.55;
+  max-width: 60ch;
+  color: color-mix(in oklab, var(--foreground) 82%, var(--background));
+}
+
+/* short laptop screens (768–860px tall): a tighter hero, so the band below still shows the next section whole */
+@media (min-width: 1024px) and (max-height: 860px) {
+  .pf-first .pf-hero {
+    padding-top: 16px;
+  }
+  .pf-name {
+    font-size: clamp(3.5rem, 1.6rem + 4vw, 4.75rem);
+  }
+  .pf-now {
+    margin-top: 14px;
+  }
+  .pf-thesis {
+    font-size: 1.125rem;
+  }
+  .pf-actions {
+    margin-top: 22px;
+  }
+  .pf-sheet__row {
+    padding: 8px 0;
+  }
+}
+
+/* the next section starts inside the band the opening screen leaves */
+@media (min-width: 1024px) and (min-height: 760px) {
+  .pf-first + .pf-section {
+    margin-top: 48px;
+  }
+}
+
+/* the bar's path goes back to the top */
+.pf-bar__top {
+  color: inherit;
+  text-decoration: none;
+  border-radius: 6px;
+  padding: 4px 6px;
+  margin: -4px -6px;
+  transition: color 150ms var(--ease-out);
+}
+
+@media (hover: hover) {
+  .pf-bar__top:hover {
+    color: var(--foreground);
+  }
+}
+
+.pf-name:focus {
+  outline: none;
+}

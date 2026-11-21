@@ -4,6 +4,7 @@ export { sectionsService } from './sections.service';
 export { linksService } from './links.service';
 export { authService } from './auth.service';
 export { statsService } from './stats.service';
+export { projectsService } from './projects.service';
 
 // Re-export types
 export type { ServiceResult } from './base.service';
