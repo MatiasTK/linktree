@@ -52,7 +52,7 @@ export function Keycap({ index, label, meta, tone = 'plain', icon, href, externa
           </span>
         )}
         <span className="key__text">
-          <span className="key__label" title={label}>
+          <span className="key__label" title={label} data-long={label.length > 28 ? '' : undefined}>
             {label}
           </span>
           {meta && <span className="key__meta">{meta}</span>}
