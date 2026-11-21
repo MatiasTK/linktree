@@ -33,7 +33,8 @@ export default async function HomePage() {
       description={settings.site_description}
       path={
         <>
-          <strong>matiastk</strong> / links
+          <strong>matiastk</strong>
+          <span>/ links</span>
         </>
       }
       shortcutCount={sections.length}

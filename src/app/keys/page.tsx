@@ -14,7 +14,8 @@ export default function KeysPage() {
       description="Thirteen switches, no destinations. Press any key, or type on your own keyboard."
       path={
         <>
-          <strong>matiastk</strong> / keys
+          <strong>matiastk</strong>
+          <span>/ keys</span>
         </>
       }
       showHome

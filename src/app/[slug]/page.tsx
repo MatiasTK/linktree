@@ -53,7 +53,8 @@ export default async function SectionPage({ params }: PageProps) {
       description={description}
       path={
         <>
-          <strong>matiastk</strong> / {section.slug}
+          <strong>matiastk</strong>
+          <span>/ {section.slug}</span>
         </>
       }
       showHome

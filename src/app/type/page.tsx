@@ -15,7 +15,8 @@ export default function TypePage() {
       description="How fast can you type? Pick a switch and race the clock."
       path={
         <>
-          <strong>matiastk</strong> / type
+          <strong>matiastk</strong>
+          <span>/ type</span>
         </>
       }
       showHome

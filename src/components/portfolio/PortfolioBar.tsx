@@ -35,7 +35,7 @@ export function PortfolioBar({ lang, homeHref, homeLabel, path, switchHref, nav 
           </svg>
           <span className="hidden sm:inline">esc</span>
         </Link>
-        <span className="truncate">{path}</span>
+        <span className="deck__path">{path}</span>
         {nav}
       </div>
       <div className="flex items-center gap-2">

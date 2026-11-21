@@ -77,7 +77,8 @@ export default async function ProjectPage({ params, searchParams }: PageProps) {
         path={
           <>
             <strong>matiastk</strong>
-            <span className="pf-crumb"> / portfolio</span> / {project.slug}
+            <span className="pf-crumb">/ portfolio</span>
+            <span>/ {project.slug}</span>
           </>
         }
         switchHref={`/portfolio/${project.slug}?lang=${lang === 'en' ? 'es' : 'en'}`}

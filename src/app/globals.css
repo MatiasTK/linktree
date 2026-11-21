@@ -179,7 +179,7 @@ a {
 .deck {
   min-height: 100dvh;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto auto auto 1fr;
   gap: 28px;
   padding: 20px 16px 28px;
@@ -195,6 +195,81 @@ a {
   font-family: var(--font-mono-ui), ui-monospace, monospace;
   font-size: 13px;
   color: var(--muted-foreground);
+}
+
+/* the path never ellipsizes: each part (handle, crumbs) sits on one 44px row,
+   and a crumb that does not fit wraps to a second row that is clipped away whole */
+.deck__path,
+.deck__path .pf-bar__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  min-width: 0;
+  height: 44px;
+  overflow: hidden;
+}
+
+.deck__path {
+  flex: 0 1 auto;
+}
+
+.deck__path > *,
+.deck__path .pf-bar__top > * {
+  flex: none;
+  white-space: nowrap;
+  line-height: 44px;
+}
+
+.deck__path > * + *,
+.deck__path .pf-bar__top > * + * {
+  margin-left: 0.6ch;
+}
+
+/* below desktop the path is a size container, so the handle can step aside whole
+   when even it does not fit (8ch is "matiastk" in the mono) */
+@media (max-width: 1023px) {
+  .deck__bar > :first-child {
+    flex: 1 1 0;
+  }
+  .deck__path {
+    flex: 1 1 0;
+    container-type: inline-size;
+  }
+}
+
+@container (width < 8.2ch) {
+  .deck__path strong {
+    visibility: hidden;
+  }
+}
+
+/* the portfolio path is one link: it clips its own parts, so its focus ring stays whole */
+.deck__path:has(.pf-bar__top) {
+  overflow: visible;
+}
+
+.deck__path > .pf-bar__top {
+  flex: 0 1 auto;
+  padding: 0 6px;
+  margin: 0 -6px;
+}
+
+@media (max-width: 419px) {
+  .deck__keys {
+    gap: 6px;
+  }
+}
+
+/* the narrowest phones: six bar keys only fit a little smaller */
+@media (max-width: 359px) {
+  .deck__bar {
+    gap: 8px;
+  }
+  .deck__bar a.keycap,
+  .deck__bar button.keycap {
+    min-width: 40px;
+    height: 40px;
+  }
 }
 
 .deck__bar strong {
@@ -1100,6 +1175,50 @@ input:focus-visible + .toggle-slider {
 
 .tf__end {
   margin-left: auto;
+}
+
+/* phones: the function row becomes a grid with flush edges; mode and length
+   keys share their row equally, language sits beside the switch */
+@media (max-width: 639px) {
+  .tf {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px;
+  }
+  .tf__group:nth-child(1),
+  .tf__group:nth-child(2) {
+    grid-column: 1 / -1;
+  }
+  .tf__group:nth-child(1) > .tf__opt,
+  .tf__group:nth-child(2) > .tf__opt {
+    flex: 1;
+  }
+  .tf__end {
+    margin-left: 0;
+    min-width: 0;
+  }
+  .tf__end .sp,
+  .tf__end button.keycap.tf__switch {
+    width: 100%;
+    max-width: none;
+  }
+  .tf__end .tf__switch-name {
+    flex: 1;
+    text-align: left;
+  }
+}
+
+/* the narrowest phones: the switch name gets its own row rather than an ellipsis */
+@media (max-width: 379px) {
+  .tf__group:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+  .tf__group:nth-child(3) > .tf__opt {
+    flex: 1;
+  }
+  .tf__end {
+    grid-column: 1 / -1;
+  }
 }
 
 button.keycap.tf__opt {
@@ -2370,7 +2489,7 @@ a.keycap.pf-pill {
 
 .key.pf-act--wide .pf-act__label {
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
 }
 
 @media (min-width: 1024px) {
@@ -2461,7 +2580,7 @@ a.keycap.pf-pill {
 }
 
 /* phones: the breadcrumb keeps the handle whole; action rows are laid out, not wrapped */
-@media (max-width: 419px) {
+@media (max-width: 639px) {
   .pf-crumb {
     display: none;
   }
@@ -2508,22 +2627,27 @@ body:has(.pf) {
   overflow-x: clip;
 }
 
+/* bleed with a clipped shadow, not a wider box: a wider box grows the mobile layout viewport */
 .pf-bar--sticky::before {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: 0 -100vmax;
+  inset: 0;
   background: var(--background);
+  box-shadow: 0 0 0 100vmax var(--background);
+  clip-path: inset(0 -100vmax);
 }
 
 .pf-bar--sticky::after {
   content: "";
   position: absolute;
-  left: -100vmax;
-  right: -100vmax;
+  left: 0;
+  right: 0;
   bottom: 0;
   height: 1px;
   background: var(--border);
+  box-shadow: 0 0 0 100vmax var(--border);
+  clip-path: inset(0 -100vmax);
   opacity: 0;
   transition: opacity 200ms var(--ease-out);
 }
@@ -2749,6 +2873,15 @@ body:has(.pf) {
   margin-top: 8px;
   font-size: 17px;
   font-weight: 600;
+  text-wrap: balance;
+}
+
+/* short headings and labels wrap evenly instead of leaving one word behind */
+.pf h3,
+.pf-now__role,
+.pf-act__label,
+.board__empty {
+  text-wrap: balance;
 }
 
 .pf-role__body {

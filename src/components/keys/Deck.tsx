@@ -48,7 +48,7 @@ export function Deck({
     <main className={cn('deck', wide && 'deck--wide')}>
       <KeyboardNav />
 
-      <div className="deck__bar">
+      <div className={cn('deck__bar', showHome && 'deck__bar--home')}>
         <div className="flex items-center gap-3 min-w-0">
           {showHome && (
             <Link href="/" className="keycap" data-key-home aria-keyshortcuts="Escape" aria-label="Back to home">
@@ -58,9 +58,9 @@ export function Deck({
               <span className="hidden sm:inline">esc</span>
             </Link>
           )}
-          <span className="truncate">{path}</span>
+          <span className="deck__path">{path}</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="deck__keys flex items-center gap-2 shrink-0">
           <Link href="/portfolio" className="keycap" aria-label="Portfolio: experience and projects" title="Portfolio">
             <Briefcase className="w-4 h-4" aria-hidden />
             <span className="hidden sm:inline font-sans">Portfolio</span>

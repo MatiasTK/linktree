@@ -73,7 +73,7 @@ export default async function PortfolioPage({ searchParams }: PageProps) {
         path={
           <ScrollTopLink label={ui.backToTop[lang]}>
             <strong>matiastk</strong>
-            <span className="pf-crumb"> / portfolio</span>
+            <span>/ portfolio</span>
           </ScrollTopLink>
         }
         switchHref={`/portfolio?lang=${lang === 'en' ? 'es' : 'en'}`}
@@ -258,7 +258,10 @@ export default async function PortfolioPage({ searchParams }: PageProps) {
         <a className="key key--accent pf-act pf-act--wide" href={`mailto:${profile.email}`}>
           <span className="key__cap">
             <Mail size={18} aria-hidden className="pf-act__icon" />
-            <span className="pf-act__label">{profile.email}</span>
+            <span className="pf-act__label">
+              {profile.email.split('@')[0]}@<wbr />
+              {profile.email.split('@')[1]}
+            </span>
             <ArrowRight size={18} aria-hidden className="pf-act__arrow" />
           </span>
         </a>
