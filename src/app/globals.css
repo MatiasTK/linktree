@@ -507,7 +507,14 @@ a {
   align-self: center;
 }
 
+/* legend row reads as one line: icon and arrow share the number's optical size and stroke */
 .key--link .key__icon svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.6;
+}
+
+.key--link .key__arrow svg {
   width: 16px;
   height: 16px;
 }

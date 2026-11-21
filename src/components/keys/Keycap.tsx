@@ -53,7 +53,8 @@ export function Keycap({ index, label, meta, tone = 'plain', icon, href, externa
         )}
         <span className="key__text">
           <span className="key__label" title={label} data-long={label.length > 28 ? '' : undefined}>
-            {label}
+            {/* keep a spaced dash with the word before it, so a line never starts with "- " */}
+            {label.replace(/ ([-–—]) /g, '\u00a0$1 ')}
           </span>
           {meta && <span className="key__meta">{meta}</span>}
         </span>
