@@ -5,7 +5,7 @@ primary_target: "src/app/type/page.tsx"
 related_targets: ["src/components/type/TypingTest.tsx"]
 ---
 
-# Type test (/type)
+# Speed typing (/type)
 
 Mode: Operate with Experience moments (the visitor is inside a timed task; the result is the payoff).
 Audience: visitors who found the switch tester or the home page, mostly on desktop with a physical keyboard; phones must still work with the on-screen keyboard.
@@ -19,7 +19,7 @@ THESIS: The test is a board on the desk: options are the board's function row of
 
 OWN-WORLD: Same case, plate and cap neutrals. Config is a function row of small keycaps with an orange LED on the selected one. Words in a recessed well, in Bricolage; untyped legend gray, typed ink, errors fault red, orange bar caret. Results are printed on caps: WPM on the one orange key, accuracy on a plain cap, Next test on the charcoal modifier.
 
-STORY: Land, see "Type test" and the words already waiting; type; the chosen switch answers each press and a miss sounds different; the timer runs in mono; at the end the well becomes the result (WPM, accuracy, per-second chart) and a name field posts to the leaderboard below.
+STORY: Land, see "Speed typing" and the words already waiting; type; the chosen switch answers each press and a miss sounds different; the timer runs in mono; at the end the well becomes the result (WPM, accuracy, per-second chart) and a name field posts to the leaderboard below.
 
 FIRST VIEWPORT: Desktop 1440: top bar; title left, one-line description right; full-width board with function row (mode, length, language, switch) and the three-line well; leaderboard starts within the fold. Phone 390: title, function row wrapping, three-line well; tapping the well opens the native keyboard.
 

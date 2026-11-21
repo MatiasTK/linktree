@@ -3,16 +3,16 @@ import { TypingTest } from '@/components/type/TypingTest';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Type test',
-  description: 'A typing test on a mechanical board. Pick a switch, type, and put your WPM on the leaderboard.',
+  title: 'Speed typing',
+  description: 'How fast can you type? Pick a switch, race the clock and put your WPM on the leaderboard.',
 };
 
 export default function TypePage() {
   return (
     <Deck
       wide
-      title="Type test"
-      description="Type the words as fast as you can. Pick the switch you want to hear."
+      title="Speed typing"
+      description="How fast can you type? Pick a switch and race the clock."
       path={
         <>
           <strong>matiastk</strong> / type

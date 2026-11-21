@@ -478,11 +478,17 @@ a {
   overflow-wrap: anywhere;
 }
 
+/* link names wrap to two balanced lines; the clamp is only a backstop for very long names */
 .key--link .key__label {
   font-size: clamp(1.25rem, 1rem + 0.9vw, 1.875rem);
+  line-height: 1.08;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .key__meta {
@@ -961,7 +967,7 @@ input:focus-visible + .toggle-slider {
 }
 
 /* ==========================================================================
-   Type test (/type): the board is the instrument.
+   Speed typing (/type): the board is the instrument.
    Function row of option keycaps, a recessed well of words, and results
    printed on caps.
    ========================================================================== */

@@ -1,6 +1,6 @@
 import type { KeySound } from '@/lib/key-sound';
 
-/** The 13 recorded switches, shared by the switch tester and the type test. */
+/** The 13 recorded switches, shared by the switch tester and speed typing. */
 
 export interface Switch {
   name: string;

@@ -9,7 +9,7 @@
  * - mod    (charcoal modifier):   Cherry MX Black PBT, linear, deeper thud
  * - small  (esc, theme, sound):   NK Creams, lighter
  *
- * The switch tester and the type test add nine more sets (TesterSound), fetched only there.
+ * The switch tester and speed typing add nine more sets (TesterSound), fetched only there.
  * Buffers are fetched once, after the page is idle, and shared across pages.
  */
 

@@ -62,7 +62,7 @@ export function Deck({
         </div>
         <div className="flex items-center gap-2">
           {!hideTypeLink && (
-            <Link href="/type" className="keycap" aria-label="Type test: how fast do you type?" title="Type test">
+            <Link href="/type" className="keycap" aria-label="Speed typing: how fast can you type?" title="Speed typing">
               <Gamepad2 className="w-4 h-4" aria-hidden />
             </Link>
           )}
