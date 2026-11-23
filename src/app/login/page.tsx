@@ -27,35 +27,37 @@ export default function LoginPage() {
       if (data.success) {
         window.location.href = '/admin';
       } else {
-        setError(data.error || 'Login failed');
+        setError(data.error || 'Wrong password. Try again.');
       }
     } catch {
-      setError('An error occurred');
+      setError('Could not reach the server. Check your connection and try again.');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm">
-        <div className="bg-card rounded-xl border border-border p-8">
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-              <Lock className="text-primary" size={32} />
-            </div>
-            <h1 className="text-2xl font-bold">Admin Login</h1>
-            <p className="text-muted-foreground text-sm mt-1">Enter your password to continue</p>
+    <main className="min-h-dvh flex items-center justify-center bg-background px-4 py-10">
+      <div className="w-full max-w-md">
+        <div className="board !block !p-6 sm:!p-8">
+          <div className="flex items-center justify-between mb-8">
+            <span className="keycap" aria-hidden>
+              <Lock size={14} />
+            </span>
+            <span className="font-mono text-[13px] text-muted-foreground">matiastk / admin</span>
           </div>
+          <h1 className="text-5xl font-extrabold tracking-[-0.04em] leading-none">Sign in</h1>
+          <p className="mt-3 text-foreground/75">Enter the admin password to edit your links.</p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 mt-8">
             <FormField label="Password">
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
+                placeholder="Password"
+                autoComplete="current-password"
                 required
                 autoFocus
                 error={!!error}
@@ -63,17 +65,17 @@ export default function LoginPage() {
             </FormField>
 
             {error && (
-              <div className="text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-lg">
+              <p role="alert" className="text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-lg">
                 {error}
-              </div>
+              </p>
             )}
 
-            <Button type="submit" className="w-full" isLoading={loading}>
-              {loading ? 'Logging in...' : 'Login'}
+            <Button type="submit" size="lg" className="w-full" isLoading={loading}>
+              Sign in
             </Button>
           </form>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

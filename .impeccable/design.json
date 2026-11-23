@@ -1,0 +1,782 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-21T00:20:36.443Z",
+  "title": "Design System: MatiasTK Links",
+  "extensions": {
+    "colorMeta": {
+      "case": {
+        "role": "neutral",
+        "displayName": "Desk Gray",
+        "canonical": "oklch(94.0% 0.005 95.1)",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#252524",
+          "#424240",
+          "#62615e",
+          "#83827f",
+          "#a6a5a2",
+          "#cac9c7",
+          "#efeeed"
+        ]
+      },
+      "plate": {
+        "role": "neutral",
+        "displayName": "Plate Stone",
+        "canonical": "oklch(86.7% 0.010 87.5)",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#262523",
+          "#43423e",
+          "#63615c",
+          "#85827c",
+          "#a7a59f",
+          "#cbc9c5",
+          "#f0eeeb"
+        ]
+      },
+      "plate-hi": {
+        "role": "neutral",
+        "displayName": "Plate Stone High",
+        "canonical": "oklch(90.4% 0.010 87.5)",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#262523",
+          "#43423e",
+          "#63615c",
+          "#85827c",
+          "#a7a59f",
+          "#cbc9c5",
+          "#f0eeeb"
+        ]
+      },
+      "plate-lo": {
+        "role": "neutral",
+        "displayName": "Plate Stone Low",
+        "canonical": "oklch(83.1% 0.012 84.6)",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#262522",
+          "#44423e",
+          "#64615b",
+          "#86827b",
+          "#a8a59e",
+          "#cbc9c4",
+          "#f0eeeb"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Type Black",
+        "canonical": "oklch(22.7% 0.004 286.1)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252526",
+          "#424243",
+          "#616163",
+          "#828284",
+          "#a5a5a7",
+          "#c9c9ca",
+          "#eeeeef"
+        ]
+      },
+      "key-hi": {
+        "role": "neutral",
+        "displayName": "Cap Highlight",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "key-face": {
+        "role": "neutral",
+        "displayName": "Cap White",
+        "canonical": "oklch(97.3% 0.004 91.4)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252524",
+          "#424240",
+          "#62615f",
+          "#838280",
+          "#a6a5a3",
+          "#cac9c7",
+          "#efeeed"
+        ]
+      },
+      "key-lo": {
+        "role": "neutral",
+        "displayName": "Cap Lower Face",
+        "canonical": "oklch(93.7% 0.007 88.6)",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#262523",
+          "#43423f",
+          "#62615e",
+          "#84827e",
+          "#a6a5a1",
+          "#cac9c6",
+          "#efeeec"
+        ]
+      },
+      "key-skirt": {
+        "role": "neutral",
+        "displayName": "Skirt Taupe",
+        "canonical": "oklch(78.4% 0.015 84.6)",
+        "tonalRamp": [
+          "#0c0b09",
+          "#262521",
+          "#44423c",
+          "#646159",
+          "#868278",
+          "#a8a59d",
+          "#ccc9c3",
+          "#f0eeea"
+        ]
+      },
+      "key-legend": {
+        "role": "neutral",
+        "displayName": "Legend Gray",
+        "canonical": "oklch(52.8% 0.011 87.5)",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#262522",
+          "#44423e",
+          "#63615b",
+          "#85827b",
+          "#a7a59f",
+          "#cbc9c4",
+          "#f0eeeb"
+        ]
+      },
+      "mod-face": {
+        "role": "secondary",
+        "displayName": "Modifier Charcoal",
+        "canonical": "oklch(29.0% 0.005 286.1)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424244",
+          "#616164",
+          "#828285",
+          "#a5a5a8",
+          "#c9c9cb",
+          "#eeeef0"
+        ]
+      },
+      "mod-hi": {
+        "role": "secondary",
+        "displayName": "Modifier Highlight",
+        "canonical": "oklch(35.8% 0.007 286.0)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424244",
+          "#616164",
+          "#828286",
+          "#a4a4a8",
+          "#c9c9cc",
+          "#eeeef0"
+        ]
+      },
+      "mod-skirt": {
+        "role": "secondary",
+        "displayName": "Modifier Skirt",
+        "canonical": "oklch(17.9% 0.004 286.0)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424243",
+          "#616163",
+          "#828285",
+          "#a5a5a7",
+          "#c9c9cb",
+          "#eeeeef"
+        ]
+      },
+      "mod-ink": {
+        "role": "secondary",
+        "displayName": "Modifier Ink",
+        "canonical": "oklch(96.1% 0.005 95.1)",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#252524",
+          "#424240",
+          "#62615e",
+          "#83827f",
+          "#a6a5a2",
+          "#cac9c7",
+          "#efeeed"
+        ]
+      },
+      "mod-legend": {
+        "role": "secondary",
+        "displayName": "Modifier Legend",
+        "canonical": "oklch(72.2% 0.011 87.5)",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#262523",
+          "#43423e",
+          "#63615c",
+          "#85827b",
+          "#a7a59f",
+          "#cbc9c4",
+          "#f0eeeb"
+        ]
+      },
+      "accent-face": {
+        "role": "primary",
+        "displayName": "Signal Orange",
+        "canonical": "oklch(68.2% 0.211 37.7)",
+        "tonalRamp": [
+          "#4a1d08",
+          "#b83a0b",
+          "#b23a0c",
+          "#f24e14",
+          "#ff5a1f",
+          "#ff7d4d",
+          "#ff9466",
+          "#ffd9c7"
+        ]
+      },
+      "accent-hi": {
+        "role": "primary",
+        "displayName": "Signal Orange High",
+        "canonical": "oklch(73.2% 0.171 40.3)",
+        "tonalRamp": [
+          "#190401",
+          "#421504",
+          "#6f280b",
+          "#a03e15",
+          "#d25624",
+          "#ec8560",
+          "#ffb296",
+          "#ffdfcb"
+        ]
+      },
+      "accent-lo": {
+        "role": "primary",
+        "displayName": "Signal Orange Low",
+        "canonical": "oklch(64.8% 0.209 36.9)",
+        "tonalRamp": [
+          "#1c0200",
+          "#480d00",
+          "#781c00",
+          "#ad2c00",
+          "#e24100",
+          "#fb7954",
+          "#ffab8d",
+          "#ffdbc6"
+        ]
+      },
+      "accent-skirt": {
+        "role": "primary",
+        "displayName": "Burnt Skirt",
+        "canonical": "oklch(52.8% 0.170 37.3)",
+        "tonalRamp": [
+          "#190401",
+          "#421406",
+          "#6f2811",
+          "#a03d1e",
+          "#d3552e",
+          "#ec8465",
+          "#ffb299",
+          "#ffdfcd"
+        ]
+      },
+      "accent-ink": {
+        "role": "primary",
+        "displayName": "Ember Black",
+        "canonical": "oklch(19.2% 0.028 71.3)",
+        "tonalRamp": [
+          "#0d0b08",
+          "#29241f",
+          "#484138",
+          "#6a5f53",
+          "#8d8071",
+          "#aea396",
+          "#d0c8be",
+          "#f4ede6"
+        ]
+      },
+      "accent-legend": {
+        "role": "primary",
+        "displayName": "Ember Legend",
+        "canonical": "oklch(29.4% 0.075 43.1)",
+        "tonalRamp": [
+          "#120905",
+          "#332018",
+          "#583a2d",
+          "#7f5645",
+          "#a9745e",
+          "#c69987",
+          "#e4c0b2",
+          "#ffe8de"
+        ]
+      },
+      "primary-ink": {
+        "role": "primary",
+        "displayName": "Ember Ink",
+        "canonical": "oklch(51.8% 0.164 37.8)",
+        "tonalRamp": [
+          "#190501",
+          "#411507",
+          "#6e2913",
+          "#9e3f20",
+          "#d05831",
+          "#ea8667",
+          "#ffb39a",
+          "#ffe0ce"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Seam",
+        "canonical": "oklch(85.5% 0.012 84.6)",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#262522",
+          "#44423e",
+          "#64615b",
+          "#86827b",
+          "#a8a59f",
+          "#cbc9c4",
+          "#f0eeeb"
+        ]
+      },
+      "destructive": {
+        "role": "neutral",
+        "displayName": "Fault Red",
+        "canonical": "oklch(53.9% 0.194 29.9)",
+        "tonalRamp": [
+          "#1b0302",
+          "#460f09",
+          "#751f15",
+          "#a93023",
+          "#dd4535",
+          "#f67b69",
+          "#ffac9c",
+          "#ffdbcf"
+        ]
+      },
+      "night-case": {
+        "role": "neutral",
+        "displayName": "Night Case",
+        "canonical": "oklch(22.7% 0.004 286.1)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252526",
+          "#424243",
+          "#616163",
+          "#828284",
+          "#a5a5a7",
+          "#c9c9ca",
+          "#eeeeef"
+        ]
+      },
+      "night-plate": {
+        "role": "neutral",
+        "displayName": "Night Plate",
+        "canonical": "oklch(28.2% 0.005 286.0)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424244",
+          "#616164",
+          "#828285",
+          "#a5a5a8",
+          "#c9c9cb",
+          "#eeeef0"
+        ]
+      },
+      "night-key-face": {
+        "role": "neutral",
+        "displayName": "Graphite Cap",
+        "canonical": "oklch(31.1% 0.007 286.0)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424244",
+          "#616164",
+          "#828286",
+          "#a4a4a8",
+          "#c9c9cc",
+          "#eeeef0"
+        ]
+      },
+      "night-key-skirt": {
+        "role": "neutral",
+        "displayName": "Graphite Skirt",
+        "canonical": "oklch(19.7% 0.004 286.0)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424243",
+          "#616163",
+          "#828285",
+          "#a5a5a7",
+          "#c9c9cb",
+          "#eeeeef"
+        ]
+      },
+      "night-ink": {
+        "role": "neutral",
+        "displayName": "Night Ink",
+        "canonical": "oklch(95.2% 0.007 88.6)",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#262523",
+          "#43423f",
+          "#62615e",
+          "#84827e",
+          "#a6a5a1",
+          "#cac9c6",
+          "#efeeec"
+        ]
+      },
+      "night-mod-face": {
+        "role": "secondary",
+        "displayName": "Night Modifier",
+        "canonical": "oklch(20.1% 0.004 286.0)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424243",
+          "#616163",
+          "#828285",
+          "#a5a5a7",
+          "#c9c9cb",
+          "#eeeeef"
+        ]
+      },
+      "night-mod-skirt": {
+        "role": "secondary",
+        "displayName": "Night Modifier Skirt",
+        "canonical": "oklch(11.6% 0.003 285.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252526",
+          "#424243",
+          "#616163",
+          "#828284",
+          "#a5a5a6",
+          "#c9c9ca",
+          "#eeeeef"
+        ]
+      },
+      "night-accent-face": {
+        "role": "primary",
+        "displayName": "Night Signal Orange",
+        "canonical": "oklch(70.3% 0.195 39.9)",
+        "tonalRamp": [
+          "#1b0300",
+          "#451100",
+          "#742200",
+          "#a73500",
+          "#dc4b00",
+          "#f57f55",
+          "#ffae8e",
+          "#ffddc6"
+        ]
+      },
+      "night-accent-skirt": {
+        "role": "primary",
+        "displayName": "Night Burnt Skirt",
+        "canonical": "oklch(50.0% 0.154 38.7)",
+        "tonalRamp": [
+          "#180502",
+          "#401709",
+          "#6c2c16",
+          "#9b4224",
+          "#cc5c36",
+          "#e6886a",
+          "#ffb49c",
+          "#ffe1cf"
+        ]
+      },
+      "night-primary-ink": {
+        "role": "primary",
+        "displayName": "Night Ember Ink",
+        "canonical": "oklch(77.1% 0.143 43.5)",
+        "tonalRamp": [
+          "#170602",
+          "#3d1908",
+          "#682f15",
+          "#964723",
+          "#c66234",
+          "#e18d69",
+          "#fab79c",
+          "#ffe3cf"
+        ]
+      },
+      "night-border": {
+        "role": "neutral",
+        "displayName": "Night Seam",
+        "canonical": "oklch(35.0% 0.007 286.0)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424244",
+          "#616164",
+          "#828286",
+          "#a4a4a8",
+          "#c9c9cc",
+          "#eeeef0"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Owner or section name in the intro; one per page."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Operate page titles (Sign in)."
+      },
+      "title": {
+        "displayName": "Key Title",
+        "purpose": "Section key labels."
+      },
+      "title-link": {
+        "displayName": "Link Key Title",
+        "purpose": "Link key labels, single line with ellipsis."
+      },
+      "body-lead": {
+        "displayName": "Bio",
+        "purpose": "One-line bio under the name, max 34ch."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Admin buttons, inputs, form copy."
+      },
+      "label": {
+        "displayName": "Mono Label",
+        "purpose": "Counts, domains, path, hints."
+      },
+      "legend": {
+        "displayName": "Key Legend",
+        "purpose": "Key numbers and small-keycap glyphs."
+      }
+    },
+    "shadows": [
+      {
+        "name": "board-drop",
+        "value": "0 2px 0 #b9b5ac, 0 40px 80px -30px rgba(40,30,20,0.35)",
+        "purpose": "The board on the desk (night: 0 2px 0 #0e0e10, 0 40px 80px -30px rgba(0,0,0,0.7)). Board only."
+      },
+      {
+        "name": "board-inset",
+        "value": "inset 0 2px 0 color-mix(in oklab, white 45%, transparent), inset 0 -3px 0 rgba(0,0,0,0.06)",
+        "purpose": "Top lip and bottom shade of the plate."
+      },
+      {
+        "name": "cap-sculpt",
+        "value": "inset 0 2px 0 color-mix(in oklab, var(--hi) 70%, white), inset 0 -10px 18px -10px rgba(0,0,0,0.14)",
+        "purpose": "Sculpted face of a large key; paired with a radial dished highlight at --key-glow opacity."
+      },
+      {
+        "name": "skirt-base",
+        "value": "0 3px 0 var(--key-skirt), 0 4px 8px rgba(0,0,0,0.12)",
+        "purpose": "Small keycap base; collapses to 0 on press."
+      },
+      {
+        "name": "button-base",
+        "value": "0 3px 0 <skirt>",
+        "purpose": "Button base in its own skirt color; 1px on press."
+      },
+      {
+        "name": "well",
+        "value": "inset 0 2px 3px rgba(0,0,0,0.05)",
+        "purpose": "Recessed inputs (0.15 on toggle tracks)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-key",
+        "value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "Key travel and button press."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Load settle, toggles, toasts, modals."
+      },
+      {
+        "name": "key-travel",
+        "value": "90ms",
+        "purpose": "Face travel; a number-key press holds 90ms before navigating (0 under reduced motion)."
+      },
+      {
+        "name": "travel-depths",
+        "value": "hover 2px / visited 3px / press 6px (7px from 640px); small keycap 3px; button 2px",
+        "purpose": "How far each state moves the face."
+      },
+      {
+        "name": "key-settle",
+        "value": "420ms ease-out, translateY(7px) to rest, delay index*45ms + 80ms",
+        "purpose": "The single orchestrated load moment; disabled under prefers-reduced-motion."
+      },
+      {
+        "name": "toggle",
+        "value": "160ms ease-out",
+        "purpose": "Toggle knob and track."
+      },
+      {
+        "name": "overlay-in",
+        "value": "slide-in 200ms / scale-in 160ms (0.96 to 1) ease-out",
+        "purpose": "Toasts and confirm modals in admin."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "links-2col",
+        "value": "900px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "max",
+        "value": "1440px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Keycap (plain)",
+      "kind": "custom",
+      "refersTo": "key-plain",
+      "description": "A section or link on a public board: sculpted face over a skirt, travels 2px on hover and 7px on press.",
+      "html": "<a href=\"#\" class=\"ds-key \"><span class=\"ds-key__cap\"><span class=\"ds-key__num\">2</span><span class=\"ds-key__arrow\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></span><span class=\"ds-key__body\"><span class=\"ds-key__label\">Projects</span><span class=\"ds-key__meta\">2 links</span></span></span></a>",
+      "css": ".ds-key{--skirt:var(--key-skirt,#bdb8ae);--hi:var(--key-hi,#fff);--face:var(--key-face,#f7f6f3);--lo:var(--key-lo,#eceae5);--ink:var(--key-ink,#1c1c1e);--legend:var(--key-legend,#6e6b64);--travel:0px;position:relative;display:block;min-width:240px;border-radius:22px;background:var(--skirt);padding-bottom:12px;color:var(--ink);text-decoration:none;font-family:var(--font-display,'Bricolage Grotesque'),system-ui,sans-serif}.ds-key--accent{--skirt:var(--acc-skirt,#b83a0b);--hi:var(--acc-hi,#ff7d4d);--face:var(--acc-face,#ff5a1f);--lo:var(--acc-lo,#f24e14);--ink:var(--acc-ink,#1c1206);--legend:var(--acc-legend,#4a1d08)}.ds-key--mod{--skirt:var(--mod-skirt,#111113);--hi:var(--mod-hi,#3c3c40);--face:var(--mod-face,#2b2b2e);--lo:var(--mod-lo,#222225);--ink:var(--mod-ink,#f3f2ee);--legend:var(--mod-legend,#a8a59e)}.ds-key__cap{display:grid;grid-template-columns:auto 1fr auto;row-gap:6px;min-height:140px;align-content:space-between;padding:22px 24px;border-radius:inherit;background:linear-gradient(180deg,var(--hi),var(--face) 42%,var(--lo));box-shadow:inset 0 2px 0 color-mix(in oklab,var(--hi) 70%,white),inset 0 -10px 18px -10px rgba(0,0,0,.14);transform:translateY(var(--travel));transition:transform 90ms cubic-bezier(.2,.8,.2,1)}.ds-key__num{font:700 13px/1 var(--font-mono-ui,'JetBrains Mono'),ui-monospace,monospace;color:var(--legend)}.ds-key__arrow{grid-column:3;color:var(--legend)}.ds-key__body{grid-column:1/-1}.ds-key__label{display:block;font-weight:700;font-size:2.25rem;line-height:1.02;letter-spacing:-.03em}.ds-key__meta{display:block;margin-top:6px;font:13px var(--font-mono-ui,'JetBrains Mono'),ui-monospace,monospace;color:var(--legend)}.ds-key:hover{--travel:2px}.ds-key:active{--travel:7px}.ds-key:focus-visible{outline:3px solid var(--ring,#1c1c1e);outline-offset:4px}"
+    },
+    {
+      "name": "Keycap (accent)",
+      "kind": "custom",
+      "refersTo": "key-accent",
+      "description": "The single primary key per board, always the first; dark legends on orange.",
+      "html": "<a href=\"#\" class=\"ds-key ds-key--accent\"><span class=\"ds-key__cap\"><span class=\"ds-key__num\">1</span><span class=\"ds-key__arrow\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></span><span class=\"ds-key__body\"><span class=\"ds-key__label\">Social Media</span><span class=\"ds-key__meta\">4 links</span></span></span></a>",
+      "css": ".ds-key{--skirt:var(--key-skirt,#bdb8ae);--hi:var(--key-hi,#fff);--face:var(--key-face,#f7f6f3);--lo:var(--key-lo,#eceae5);--ink:var(--key-ink,#1c1c1e);--legend:var(--key-legend,#6e6b64);--travel:0px;position:relative;display:block;min-width:240px;border-radius:22px;background:var(--skirt);padding-bottom:12px;color:var(--ink);text-decoration:none;font-family:var(--font-display,'Bricolage Grotesque'),system-ui,sans-serif}.ds-key--accent{--skirt:var(--acc-skirt,#b83a0b);--hi:var(--acc-hi,#ff7d4d);--face:var(--acc-face,#ff5a1f);--lo:var(--acc-lo,#f24e14);--ink:var(--acc-ink,#1c1206);--legend:var(--acc-legend,#4a1d08)}.ds-key--mod{--skirt:var(--mod-skirt,#111113);--hi:var(--mod-hi,#3c3c40);--face:var(--mod-face,#2b2b2e);--lo:var(--mod-lo,#222225);--ink:var(--mod-ink,#f3f2ee);--legend:var(--mod-legend,#a8a59e)}.ds-key__cap{display:grid;grid-template-columns:auto 1fr auto;row-gap:6px;min-height:140px;align-content:space-between;padding:22px 24px;border-radius:inherit;background:linear-gradient(180deg,var(--hi),var(--face) 42%,var(--lo));box-shadow:inset 0 2px 0 color-mix(in oklab,var(--hi) 70%,white),inset 0 -10px 18px -10px rgba(0,0,0,.14);transform:translateY(var(--travel));transition:transform 90ms cubic-bezier(.2,.8,.2,1)}.ds-key__num{font:700 13px/1 var(--font-mono-ui,'JetBrains Mono'),ui-monospace,monospace;color:var(--legend)}.ds-key__arrow{grid-column:3;color:var(--legend)}.ds-key__body{grid-column:1/-1}.ds-key__label{display:block;font-weight:700;font-size:2.25rem;line-height:1.02;letter-spacing:-.03em}.ds-key__meta{display:block;margin-top:6px;font:13px var(--font-mono-ui,'JetBrains Mono'),ui-monospace,monospace;color:var(--legend)}.ds-key:hover{--travel:2px}.ds-key:active{--travel:7px}.ds-key:focus-visible{outline:3px solid var(--ring,#1c1c1e);outline-offset:4px}"
+    },
+    {
+      "name": "Keycap (modifier)",
+      "kind": "custom",
+      "refersTo": "key-mod",
+      "description": "The charcoal modifier key, last on boards of three or more; a near-black cap at night, darker than the graphite plain caps.",
+      "html": "<a href=\"#\" class=\"ds-key ds-key--mod\"><span class=\"ds-key__cap\"><span class=\"ds-key__num\">3</span><span class=\"ds-key__arrow\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></span><span class=\"ds-key__body\"><span class=\"ds-key__label\">Contact</span><span class=\"ds-key__meta\">mail.example</span></span></span></a>",
+      "css": ".ds-key{--skirt:var(--key-skirt,#bdb8ae);--hi:var(--key-hi,#fff);--face:var(--key-face,#f7f6f3);--lo:var(--key-lo,#eceae5);--ink:var(--key-ink,#1c1c1e);--legend:var(--key-legend,#6e6b64);--travel:0px;position:relative;display:block;min-width:240px;border-radius:22px;background:var(--skirt);padding-bottom:12px;color:var(--ink);text-decoration:none;font-family:var(--font-display,'Bricolage Grotesque'),system-ui,sans-serif}.ds-key--accent{--skirt:var(--acc-skirt,#b83a0b);--hi:var(--acc-hi,#ff7d4d);--face:var(--acc-face,#ff5a1f);--lo:var(--acc-lo,#f24e14);--ink:var(--acc-ink,#1c1206);--legend:var(--acc-legend,#4a1d08)}.ds-key--mod{--skirt:var(--mod-skirt,#111113);--hi:var(--mod-hi,#3c3c40);--face:var(--mod-face,#2b2b2e);--lo:var(--mod-lo,#222225);--ink:var(--mod-ink,#f3f2ee);--legend:var(--mod-legend,#a8a59e)}.ds-key__cap{display:grid;grid-template-columns:auto 1fr auto;row-gap:6px;min-height:140px;align-content:space-between;padding:22px 24px;border-radius:inherit;background:linear-gradient(180deg,var(--hi),var(--face) 42%,var(--lo));box-shadow:inset 0 2px 0 color-mix(in oklab,var(--hi) 70%,white),inset 0 -10px 18px -10px rgba(0,0,0,.14);transform:translateY(var(--travel));transition:transform 90ms cubic-bezier(.2,.8,.2,1)}.ds-key__num{font:700 13px/1 var(--font-mono-ui,'JetBrains Mono'),ui-monospace,monospace;color:var(--legend)}.ds-key__arrow{grid-column:3;color:var(--legend)}.ds-key__body{grid-column:1/-1}.ds-key__label{display:block;font-weight:700;font-size:2.25rem;line-height:1.02;letter-spacing:-.03em}.ds-key__meta{display:block;margin-top:6px;font:13px var(--font-mono-ui,'JetBrains Mono'),ui-monospace,monospace;color:var(--legend)}.ds-key:hover{--travel:2px}.ds-key:active{--travel:7px}.ds-key:focus-visible{outline:3px solid var(--ring,#1c1c1e);outline-offset:4px}"
+    },
+    {
+      "name": "Board",
+      "kind": "card",
+      "refersTo": "board",
+      "description": "The recessed plate that holds keys; the only element with a long drop shadow.",
+      "html": "<div class=\"ds-board\"><a href=\"#\" class=\"ds-key ds-key--accent\"><span class=\"ds-key__cap\"><span class=\"ds-key__num\">1</span><span class=\"ds-key__arrow\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></span><span class=\"ds-key__body\"><span class=\"ds-key__label\">Social Media</span><span class=\"ds-key__meta\">4 links</span></span></span></a><a href=\"#\" class=\"ds-key \"><span class=\"ds-key__cap\"><span class=\"ds-key__num\">2</span><span class=\"ds-key__arrow\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></span><span class=\"ds-key__body\"><span class=\"ds-key__label\">Projects</span><span class=\"ds-key__meta\">2 links</span></span></span></a></div>",
+      "css": ".ds-board{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:30px;border-radius:34px;background:linear-gradient(180deg,var(--plate-hi,#e2dfd8),var(--plate-lo,#cbc7bf));box-shadow:inset 0 2px 0 rgba(255,255,255,.45),inset 0 -3px 0 rgba(0,0,0,.06),var(--shadow-board,0 2px 0 #b9b5ac,0 40px 80px -30px rgba(40,30,20,.35))}.ds-key{--skirt:var(--key-skirt,#bdb8ae);--hi:var(--key-hi,#fff);--face:var(--key-face,#f7f6f3);--lo:var(--key-lo,#eceae5);--ink:var(--key-ink,#1c1c1e);--legend:var(--key-legend,#6e6b64);--travel:0px;position:relative;display:block;min-width:240px;border-radius:22px;background:var(--skirt);padding-bottom:12px;color:var(--ink);text-decoration:none;font-family:var(--font-display,'Bricolage Grotesque'),system-ui,sans-serif}.ds-key--accent{--skirt:var(--acc-skirt,#b83a0b);--hi:var(--acc-hi,#ff7d4d);--face:var(--acc-face,#ff5a1f);--lo:var(--acc-lo,#f24e14);--ink:var(--acc-ink,#1c1206);--legend:var(--acc-legend,#4a1d08)}.ds-key--mod{--skirt:var(--mod-skirt,#111113);--hi:var(--mod-hi,#3c3c40);--face:var(--mod-face,#2b2b2e);--lo:var(--mod-lo,#222225);--ink:var(--mod-ink,#f3f2ee);--legend:var(--mod-legend,#a8a59e)}.ds-key__cap{display:grid;grid-template-columns:auto 1fr auto;row-gap:6px;min-height:140px;align-content:space-between;padding:22px 24px;border-radius:inherit;background:linear-gradient(180deg,var(--hi),var(--face) 42%,var(--lo));box-shadow:inset 0 2px 0 color-mix(in oklab,var(--hi) 70%,white),inset 0 -10px 18px -10px rgba(0,0,0,.14);transform:translateY(var(--travel));transition:transform 90ms cubic-bezier(.2,.8,.2,1)}.ds-key__num{font:700 13px/1 var(--font-mono-ui,'JetBrains Mono'),ui-monospace,monospace;color:var(--legend)}.ds-key__arrow{grid-column:3;color:var(--legend)}.ds-key__body{grid-column:1/-1}.ds-key__label{display:block;font-weight:700;font-size:2.25rem;line-height:1.02;letter-spacing:-.03em}.ds-key__meta{display:block;margin-top:6px;font:13px var(--font-mono-ui,'JetBrains Mono'),ui-monospace,monospace;color:var(--legend)}.ds-key:hover{--travel:2px}.ds-key:active{--travel:7px}.ds-key:focus-visible{outline:3px solid var(--ring,#1c1c1e);outline-offset:4px}"
+    },
+    {
+      "name": "Small Keycap",
+      "kind": "button",
+      "refersTo": "keycap-small",
+      "description": "Mini key for number hints, the theme switch, Escape/home and View site.",
+      "html": "<button class=\"ds-keycap\" aria-label=\"Back to home\">esc</button>",
+      "css": ".ds-keycap{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;height:44px;padding:0 8px;border:0;border-radius:8px;background:linear-gradient(180deg,var(--key-hi,#fff),var(--key-face,#f7f6f3));box-shadow:0 3px 0 var(--key-skirt,#bdb8ae),0 4px 8px rgba(0,0,0,.12);font:700 13px var(--font-mono-ui,'JetBrains Mono'),ui-monospace,monospace;color:var(--key-ink,#1c1c1e);cursor:pointer;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms cubic-bezier(.2,.8,.2,1)}.ds-keycap:active{transform:translateY(3px);box-shadow:0 0 0 var(--key-skirt,#bdb8ae),0 1px 3px rgba(0,0,0,.12)}.ds-keycap:focus-visible{outline:2px solid var(--ring,#1c1c1e);outline-offset:3px}"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Admin primary action: orange face on a burnt skirt base, dark ink.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Save changes</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:40px;padding:.5rem 1.1rem;border:0;border-radius:12px;font:600 .9375rem var(--font-display,'Bricolage Grotesque'),system-ui,sans-serif;cursor:pointer;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms cubic-bezier(.2,.8,.2,1),background-color 120ms}.ds-btn:active{transform:translateY(2px)}.ds-btn:focus-visible{outline:2px solid var(--ring,#1c1c1e);outline-offset:3px}.ds-btn-primary{background:linear-gradient(180deg,var(--acc-hi,#ff7d4d),var(--acc-face,#ff5a1f));color:var(--primary-foreground,#1c1206);box-shadow:0 3px 0 var(--acc-skirt,#b83a0b)}.ds-btn-primary:active{box-shadow:0 1px 0 var(--acc-skirt,#b83a0b)}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Cap-white button on a taupe skirt base.",
+      "html": "<button class=\"ds-btn ds-btn-secondary\">Cancel</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:40px;padding:.5rem 1.1rem;border:0;border-radius:12px;font:600 .9375rem var(--font-display,'Bricolage Grotesque'),system-ui,sans-serif;cursor:pointer;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms cubic-bezier(.2,.8,.2,1),background-color 120ms}.ds-btn:active{transform:translateY(2px)}.ds-btn:focus-visible{outline:2px solid var(--ring,#1c1c1e);outline-offset:3px}.ds-btn-secondary{background:linear-gradient(180deg,var(--key-hi,#fff),var(--key-face,#f7f6f3));color:var(--key-ink,#1c1c1e);box-shadow:0 3px 0 var(--key-skirt,#bdb8ae)}.ds-btn-secondary:active{box-shadow:0 1px 0 var(--key-skirt,#bdb8ae)}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Recessed cap-white field; ink border and orange halo on focus.",
+      "html": "<input class=\"ds-input\" placeholder=\"Password\" />",
+      "css": ".ds-input{width:100%;min-height:44px;padding:.625rem .875rem;border-radius:12px;border:1px solid var(--border,#d3cfc7);background:var(--card,#f7f6f3);color:var(--foreground,#1c1c1e);font:400 .9375rem var(--font-display,'Bricolage Grotesque'),system-ui,sans-serif;box-shadow:inset 0 2px 3px rgba(0,0,0,.05);transition:border-color .15s,box-shadow .15s}.ds-input::placeholder{color:var(--muted-foreground,#6e6b64)}.ds-input:focus{outline:none;border-color:var(--foreground,#1c1c1e);box-shadow:0 0 0 3px color-mix(in oklab,var(--primary,#ff5a1f) 35%,transparent)}"
+    },
+    {
+      "name": "Toggle",
+      "kind": "chip",
+      "refersTo": "",
+      "description": "Recessed plate track with a domed knob; orange when on.",
+      "html": "<label class=\"ds-toggle\"><input type=\"checkbox\" checked /><span class=\"ds-toggle__track\"></span></label>",
+      "css": ".ds-toggle{position:relative;display:inline-block;width:44px;height:26px}.ds-toggle input{opacity:0;width:0;height:0}.ds-toggle__track{position:absolute;inset:0;cursor:pointer;background:var(--plate,#d6d3cc);border-radius:26px;box-shadow:inset 0 2px 3px rgba(0,0,0,.15);transition:background-color 160ms cubic-bezier(.16,1,.3,1)}.ds-toggle__track::before{content:\"\";position:absolute;left:3px;bottom:3px;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#fff,#eceae5);box-shadow:0 2px 0 rgba(0,0,0,.18);transition:transform 160ms cubic-bezier(.16,1,.3,1)}.ds-toggle input:checked+.ds-toggle__track{background:var(--primary,#ff5a1f)}.ds-toggle input:checked+.ds-toggle__track::before{transform:translateX(18px)}.ds-toggle input:focus-visible+.ds-toggle__track{outline:2px solid var(--ring,#1c1c1e);outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Desk Keyboard",
+    "overview": "The page is a mechanical keyboard sitting on a warm gray desk. The owner's name is set huge beside it, and the content is the board: a recessed plate holding sculpted keycaps, one per section or link. Every control is a key that physically travels when pressed, by finger, pointer or the number row, and then navigates. The system rejects the centred avatar over a column of rounded pill buttons; the keyboard is the layout, not a decoration on top of one.\n\nDensity is low and the objects are large: on desktop, keys run around 200px tall, and on a phone they span the full width at no less than 84px. Depth is physical, never ambient. Light falls from above onto a dished cap face, a darker skirt sits under every cap, and the board casts one long soft shadow onto the case. Motion is short, precise and mechanical: a 90ms travel, plus one staggered settle as the keys land on the plate at load.\n\nDark theme is the same board at night. The case turns charcoal, the plain caps turn graphite, the modifier key sinks to a near-black cap darker than the graphite, and the orange key stays the only bright key and the only warm light in the room. Admin and login surfaces inherit the same tokens, type and key-travel detail at a quieter, form-sized scale.",
+    "keyCharacteristics": [
+      "Every navigable item is a keycap with a face, a skirt and real travel.",
+      "One orange accent key per board, one charcoal modifier key at most, every other key plain.",
+      "Bricolage Grotesque for names and key legends; JetBrains Mono for numbers, counts, domains and hints.",
+      "Number keys 1–9 and Escape drive navigation; a pressed key travels before it navigates.",
+      "Visited keys rest 3px low, like a key that has been used; no extra mark."
+    ],
+    "rules": [
+      {
+        "name": "The One Warm Light Rule",
+        "body": "Orange appears on exactly one key per board, the primary one. Everything else stays in the case, plate and cap neutrals. A second orange key means the first one is no longer primary.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Not Paint Rule",
+        "body": "Orange is never used for small text on the light case. Text that has to read as orange uses primary-ink (`.text-primary` is overridden to it). Legends on an orange key use dark accent-ink and accent-legend, never white.",
+        "section": "colors"
+      },
+      {
+        "name": "The Night Board Rule",
+        "body": "Theme differences are expressed only through tokens redefined under `.dark` (for example `--key-glow`, which dims the dished-face highlight at night). Never write `.dark .x` descendant rules in globals.css: the CSS pipeline drops them.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono For Machines Rule",
+        "body": "Anything that is a number, a count, a domain, a path or a keyboard hint is set in JetBrains Mono at 13–14px. Names and labels that people read as words stay in Bricolage.",
+        "section": "typography"
+      },
+      {
+        "name": "The Skirt Is The Shadow Rule",
+        "body": "A raised control shows its height with a solid base in its own skirt color, and pressing it removes that base as the face travels down. Do not add floating blur shadows to controls.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do make every navigable item on a public board a keycap with a face, skirt and travel; tone it by position (first accent, last modifier, rest plain).",
+      "Do keep keys large: at least 84px tall on phones and full width, so the first key sits above the fold.",
+      "Do use primary-ink for orange text and accent-ink for legends on orange.",
+      "Do express light and dark differences through tokens redefined in `.dark`, never `.dark` descendant selectors.",
+      "Do keep motion to the 90ms travel and the single staggered settle (420ms, 45ms per key) on load, and freeze both under `prefers-reduced-motion`.",
+      "Do show visited keys 3px low, stored per viewer. Don't add a check or badge for visited."
+    ],
+    "donts": [
+      "Don't lay links out as a centred avatar over a column of rounded pill buttons.",
+      "Don't put a second orange key on a board, or use orange for small text on the light case.",
+      "Don't put white legends on the orange key.",
+      "Don't give raised controls floating blur shadows; their depth is the skirt base.",
+      "Don't set counts, domains, numbers or hints in the display face, or names in the mono."
+    ]
+  }
+}

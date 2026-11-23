@@ -7,7 +7,7 @@ export const MAX_LENGTHS = {
   label: 100,
   url: 2000,
   description: 500,
-
+  link_description: 140,
   profile_initial: 1,
   profile_image_url: 2000,
   site_title: 100,
@@ -42,6 +42,9 @@ export function validateUrl(url: string): string | null {
   }
 }
 
+/** Paths owned by fixed routes; a section with one of these slugs would be unreachable. */
+export const RESERVED_SLUGS = ['admin', 'login', 'api', 'keys', 'sounds', 'type', 'portfolio', 'l'];
+
 /**
  * Validate and sanitize a slug
  * Only allows lowercase letters, numbers, and hyphens
@@ -67,7 +70,7 @@ export function validateIconType(iconType: string): IconType {
   if (AVAILABLE_ICONS.includes(iconType as IconType)) {
     return iconType as IconType;
   }
-  return 'link'; // Default fallback
+  return 'auto'; // Default: the destination's favicon
 }
 
 /**
@@ -141,11 +144,25 @@ export function validateLinkData(data: Record<string, unknown>): ValidationResul
   label?: string;
   url?: string;
   icon_type?: IconType;
+  description?: string | null;
   is_visible?: boolean;
   display_order?: number;
-
+  short_link?: boolean;
+  short_code?: string | null;
 }> {
   const result: Record<string, unknown> = {};
+
+  if ('short_link' in data) {
+    result.short_link = Boolean(data.short_link);
+  }
+
+  if ('short_code' in data && data.short_code !== null && data.short_code !== '') {
+    const code = validateShortCode(data.short_code);
+    if (code === null) {
+      return { success: false, error: `Use up to ${SHORT_CODE_MAX} lowercase letters, numbers and hyphens for the short code.` };
+    }
+    result.short_code = code;
+  }
 
   if ('section_id' in data) {
     const sectionId = validatePositiveInt(data.section_id, -1);
@@ -183,7 +200,59 @@ export function validateLinkData(data: Record<string, unknown>): ValidationResul
     result.display_order = validatePositiveInt(data.display_order);
   }
 
+  if ('description' in data) {
+    const description = sanitizeString(data.description, MAX_LENGTHS.link_description);
+    result.description = description.length > 0 ? description : null;
+  }
 
+  return { success: true, data: result };
+}
+
+export const SHORT_CODE_MAX = 40;
+
+/** Short link codes: lowercase letters, digits and inner hyphens, like a slug. */
+export function validateShortCode(code: unknown): string | null {
+  if (typeof code !== 'string') return null;
+  const trimmed = code.trim().toLowerCase();
+  if (trimmed.length === 0 || trimmed.length > SHORT_CODE_MAX) return null;
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(trimmed) ? trimmed : null;
+}
+
+/**
+ * Validate short link creation/update data. Destinations must be http(s):
+ * a redirect to mailto: or tel: works unevenly across apps.
+ */
+export function validateShortLinkData(data: Record<string, unknown>): ValidationResult<{
+  code?: string;
+  url?: string;
+  label?: string;
+  is_active?: boolean;
+}> {
+  const result: Record<string, unknown> = {};
+
+  if ('code' in data && data.code !== '' && data.code !== null && data.code !== undefined) {
+    const code = validateShortCode(data.code);
+    if (code === null) {
+      return { success: false, error: `Use up to ${SHORT_CODE_MAX} lowercase letters, numbers and hyphens for the code.` };
+    }
+    result.code = code;
+  }
+
+  if ('url' in data) {
+    const url = validateUrl(data.url as string);
+    if (url === null || !/^https?:/i.test(url)) {
+      return { success: false, error: 'The destination must be an http or https address.' };
+    }
+    result.url = url;
+  }
+
+  if ('label' in data) {
+    result.label = sanitizeString(data.label, MAX_LENGTHS.label);
+  }
+
+  if ('is_active' in data) {
+    result.is_active = Boolean(data.is_active);
+  }
 
   return { success: true, data: result };
 }
@@ -214,6 +283,9 @@ export function validateSectionData(data: Record<string, unknown>): ValidationRe
     const slug = validateSlug(data.slug as string);
     if (slug === null) {
       return { success: false, error: 'Invalid slug. Use only lowercase letters, numbers, and hyphens.' };
+    }
+    if (RESERVED_SLUGS.includes(slug)) {
+      return { success: false, error: `"${slug}" is used by the site itself. Pick another slug.` };
     }
     result.slug = slug;
   }
@@ -294,4 +366,103 @@ export function validateSettingsData(data: Record<string, unknown>): ValidationR
   }
 
   return { success: true, data: result };
+}
+
+const PROJECT_TEXT_FIELDS = {
+  name: 80,
+  year: 20,
+  kind_en: 80,
+  kind_es: 80,
+  summary_en: 300,
+  summary_es: 300,
+  body_en: 6000,
+  body_es: 6000,
+  stack: 300,
+} as const;
+
+export interface ProjectInput {
+  slug?: string;
+  name?: string;
+  year?: string | null;
+  kind_en?: string;
+  kind_es?: string;
+  summary_en?: string;
+  summary_es?: string;
+  body_en?: string;
+  body_es?: string;
+  stack?: string;
+  image_url?: string | null;
+  site_url?: string | null;
+  repo_url?: string | null;
+  is_visible?: boolean;
+  display_order?: number;
+}
+
+/**
+ * Validate portfolio project create/update data. Only keys present in `data` are returned.
+ */
+export function validateProjectData(data: Record<string, unknown>): ValidationResult<ProjectInput> {
+  const result: Record<string, unknown> = {};
+
+  if ('slug' in data) {
+    const slug = validateSlug(data.slug as string);
+    if (slug === null) {
+      return { success: false, error: 'Invalid slug. Use only lowercase letters, numbers, and hyphens.' };
+    }
+    result.slug = slug;
+  }
+
+  for (const [field, max] of Object.entries(PROJECT_TEXT_FIELDS)) {
+    if (field in data) {
+      result[field] = sanitizeString(data[field], max);
+    }
+  }
+
+  if ('name' in result && (result.name as string).length === 0) {
+    return { success: false, error: 'Name is required' };
+  }
+  if ('year' in result) {
+    result.year = (result.year as string) || null;
+  }
+  if ('stack' in result) {
+    result.stack = (result.stack as string)
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .join(', ');
+  }
+
+  if ('image_url' in data) {
+    const raw = typeof data.image_url === 'string' ? data.image_url.trim() : '';
+    if (raw) {
+      const valid = validateImageUrl(raw);
+      if (valid === null) return { success: false, error: 'Invalid image URL. Must be a valid HTTPS URL.' };
+      result.image_url = valid;
+    } else {
+      result.image_url = null;
+    }
+  }
+
+  for (const field of ['site_url', 'repo_url'] as const) {
+    if (field in data) {
+      const raw = typeof data[field] === 'string' ? (data[field] as string).trim() : '';
+      if (raw) {
+        const valid = validateUrl(raw);
+        if (valid === null) return { success: false, error: `Invalid ${field === 'site_url' ? 'site' : 'repository'} URL.` };
+        result[field] = valid;
+      } else {
+        result[field] = null;
+      }
+    }
+  }
+
+  if ('is_visible' in data) {
+    result.is_visible = Boolean(data.is_visible);
+  }
+
+  if ('display_order' in data) {
+    result.display_order = validatePositiveInt(data.display_order);
+  }
+
+  return { success: true, data: result as ProjectInput };
 }

@@ -1,0 +1,2276 @@
+/* ==========================================================================
+   Admin: the owner's workbench. Operate surface that inherits the Desk
+   Keyboard world through tokens, type and detail. Charcoal marks the held
+   (current) item; orange appears once per screen, on the primary key.
+   ========================================================================== */
+
+.adm {
+  --rail-w: 84px;
+  --pane-w: 440px;
+  --head-h: 64px;
+  --tabbar-h: 64px;
+  --bench: color-mix(in oklab, var(--plate-hi) 70%, var(--background));
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 15px;
+}
+
+.adm ::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.adm-mono {
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Navigation: bottom tab bar on phones, a narrow rail from 768px
+   -------------------------------------------------------------------------- */
+
+.adm-rail {
+  position: fixed;
+  z-index: 40;
+  inset: auto 0 0 0;
+  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+  padding: 6px 8px env(safe-area-inset-bottom);
+  display: flex;
+  background: var(--bench);
+  border-top: 1px solid var(--border);
+}
+
+.adm-rail__nav {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.adm-rail__item {
+  letter-spacing: -0.01em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 50px;
+  border-radius: 12px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 150ms var(--ease-out),
+    color 150ms var(--ease-out),
+    transform 90ms var(--ease-key),
+    box-shadow 90ms var(--ease-key);
+}
+
+.adm-rail__item:hover {
+  color: var(--foreground);
+  background: color-mix(in oklab, var(--foreground) 6%, transparent);
+}
+
+/* the held modifier: current area sits on a charcoal cap with its skirt */
+.adm-rail__item[aria-current="page"] {
+  background: linear-gradient(180deg, var(--mod-hi), var(--mod-face));
+  color: var(--mod-ink);
+  box-shadow: 0 3px 0 var(--mod-skirt);
+}
+
+.adm-rail__item:active {
+  transform: translateY(2px);
+}
+
+.adm-rail__item[aria-current="page"]:active {
+  box-shadow: 0 1px 0 var(--mod-skirt);
+}
+
+.adm-rail__foot {
+  display: none;
+}
+
+.adm-rail__brand {
+  display: none;
+}
+
+/* phone top strip: where the rail's footer actions live on small screens */
+.adm-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bench);
+}
+
+.adm-topbar__path {
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+.adm-topbar__path strong {
+  color: var(--foreground);
+}
+
+.adm-topbar__actions {
+  display: flex;
+  gap: 4px;
+}
+
+.adm-main {
+  min-width: 0;
+  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 24px);
+}
+
+@media (min-width: 768px) {
+  .adm {
+    grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  }
+
+  .adm-topbar {
+    display: none;
+  }
+
+  .adm-main {
+    padding-bottom: 0;
+  }
+
+  .adm-rail {
+    position: sticky;
+    inset: auto;
+    top: 0;
+    height: 100dvh;
+    padding: 14px 8px;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    border-top: 0;
+    border-right: 1px solid var(--border);
+  }
+
+  .adm-rail__brand {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.03em;
+    color: var(--foreground);
+    text-decoration: none;
+  }
+
+  .adm-rail__nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    padding: 0 2px;
+  }
+
+  .adm-rail__item {
+    min-height: 58px;
+  }
+
+  .adm-rail__foot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+/* small square tool button: icon only, flat until hovered */
+.adm-tool {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  color: var(--muted-foreground);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background-color 150ms var(--ease-out),
+    color 150ms var(--ease-out);
+}
+
+.adm-tool:hover {
+  color: var(--foreground);
+  background: color-mix(in oklab, var(--foreground) 7%, transparent);
+}
+
+.adm-tool:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.adm-tool--danger:hover {
+  color: var(--destructive);
+  background: color-mix(in oklab, var(--destructive) 10%, transparent);
+}
+
+.adm-tool[aria-pressed="true"] {
+  color: var(--foreground);
+}
+
+/* --------------------------------------------------------------------------
+   Page head
+   -------------------------------------------------------------------------- */
+
+.adm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  padding: 18px 16px 14px;
+}
+
+.adm-head__title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  min-width: 0;
+}
+
+.adm-head h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+.adm-head__meta {
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+.adm-head__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .adm-head {
+    min-height: var(--head-h);
+    padding: 20px 28px 16px;
+  }
+  .adm-head h1 {
+    font-size: 28px;
+  }
+}
+
+/* buttons in the admin: the shared .btn keys at a tool size */
+.adm .btn {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.adm .btn-ghost:hover {
+  background: color-mix(in oklab, var(--foreground) 7%, transparent);
+}
+
+.adm .btn-danger {
+  background: transparent;
+  color: var(--destructive);
+}
+
+.adm .btn-danger:hover {
+  background: color-mix(in oklab, var(--destructive) 10%, transparent);
+}
+
+.adm .btn:focus-visible,
+.adm-tool:focus-visible,
+.adm-rail__item:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* shortcut hint printed on a tiny keycap inside a button */
+.adm-kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 5px;
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--key-legend);
+  background: linear-gradient(180deg, var(--key-hi), var(--key-face));
+  box-shadow: 0 2px 0 var(--key-skirt);
+  transform: translateY(-1px);
+}
+
+.btn-primary .adm-kbd {
+  color: var(--acc-legend);
+  background: color-mix(in oklab, var(--acc-hi) 55%, white);
+  box-shadow: 0 2px 0 var(--acc-skirt);
+}
+
+@media (hover: none) {
+  .adm-kbd--hint {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Workbench: worklist + right pane (preview, or the editor in its place)
+   -------------------------------------------------------------------------- */
+
+.adm-work {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100dvh;
+}
+
+.adm-work__list {
+  min-width: 0;
+}
+
+.adm-work__body {
+  padding: 0 16px 32px;
+}
+
+@media (min-width: 768px) {
+  .adm-work__body {
+    padding: 0 28px 40px;
+  }
+}
+
+.adm-pane {
+  display: none;
+}
+
+.adm-pane[data-open="true"] {
+  display: flex;
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  flex-direction: column;
+  background: var(--bench);
+  animation: adm-pane-in 200ms var(--ease-out);
+}
+
+.adm-scrim {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .adm-pane[data-open="true"] {
+    inset: 0 0 0 auto;
+    width: min(var(--pane-w), 100vw);
+    border-left: 1px solid var(--border);
+    box-shadow: -24px 0 60px -30px rgba(20, 16, 10, 0.45);
+  }
+
+  .adm-scrim[data-open="true"] {
+    display: block;
+    position: fixed;
+    z-index: 55;
+    inset: 0;
+    background: rgba(20, 18, 14, 0.32);
+    animation: adm-fade-in 200ms var(--ease-out);
+  }
+}
+
+/* wide screens: the pane is docked and always present */
+@media (min-width: 1180px) {
+  .adm-work {
+    grid-template-columns: minmax(0, 1fr) var(--pane-w);
+  }
+
+  .adm-pane,
+  .adm-pane[data-open="true"] {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    inset: auto;
+    top: 0;
+    width: auto;
+    height: 100dvh;
+    background: var(--bench);
+    border-left: 1px solid var(--border);
+    box-shadow: none;
+    animation: none;
+  }
+
+  .adm-scrim[data-open="true"] {
+    display: none;
+  }
+
+  .adm-only-narrow {
+    display: none !important;
+  }
+}
+
+@keyframes adm-pane-in {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes adm-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Phone preview
+   -------------------------------------------------------------------------- */
+
+.adm-preview {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.adm-preview__bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 12px 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.adm-preview__bar .select {
+  min-height: 36px;
+  padding-top: 0;
+  padding-bottom: 0;
+  font-size: 14px;
+  border-radius: 10px;
+}
+
+.adm-preview__label {
+  font-size: 13px;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.adm-preview__stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.adm-phone {
+  position: relative;
+  flex: none;
+  border-radius: calc(44px * var(--s, 1));
+  padding: calc(10px * var(--s, 1));
+  background: linear-gradient(180deg, var(--mod-hi), var(--mod-face));
+  box-shadow:
+    0 calc(4px * var(--s, 1)) 0 var(--mod-skirt),
+    0 30px 60px -30px rgba(20, 16, 10, 0.5);
+}
+
+.adm-phone__screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: calc(34px * var(--s, 1));
+  background: var(--background);
+}
+
+.adm-phone iframe {
+  display: block;
+  border: 0;
+  transform-origin: 0 0;
+  background: var(--background);
+}
+
+/* the signature moment: after a save the screen is wiped by the plate and the page returns */
+.adm-phone__wipe {
+  position: absolute;
+  inset: 0;
+  background: var(--plate);
+  pointer-events: none;
+  clip-path: inset(0 0 100% 0);
+}
+
+.adm-phone[data-reloading="true"] .adm-phone__wipe {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 160ms var(--ease-out);
+}
+
+.adm-phone[data-reloading="false"] .adm-phone__wipe {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 260ms var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adm-phone__wipe,
+  .adm-pane[data-open="true"],
+  .adm-scrim[data-open="true"],
+  .adm-panel {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Editor panel
+   -------------------------------------------------------------------------- */
+
+.adm-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  animation: adm-pane-in 200ms var(--ease-out);
+}
+
+.adm-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 12px 12px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.adm-panel__head h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-panel__close {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 8px 0 10px;
+  border-radius: 10px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.adm-panel__close:hover {
+  color: var(--foreground);
+  background: color-mix(in oklab, var(--foreground) 7%, transparent);
+}
+
+.adm-panel__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 20px;
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.adm-panel__foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  background: var(--bench);
+}
+
+.adm-panel__foot .adm-spacer {
+  flex: 1;
+}
+
+.adm-panel__error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--destructive) 40%, transparent);
+  background: color-mix(in oklab, var(--destructive) 8%, transparent);
+  color: var(--destructive);
+  font-size: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   Fields
+   -------------------------------------------------------------------------- */
+
+.adm-field {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.adm-field__label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.adm-field__count {
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+
+.adm-field__hint {
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--muted-foreground);
+}
+
+.adm-field__hint code,
+.adm-field__hint .adm-mono {
+  font-size: 12px;
+}
+
+.adm .input,
+.adm .select {
+  min-height: 42px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.adm textarea.input {
+  min-height: 0;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.adm .input[data-mono] {
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 14px;
+}
+
+.adm .input[aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+
+.adm-field-row {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 520px) {
+  .adm-field-row--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .adm-field-row--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.adm-fieldset {
+  display: grid;
+  gap: 14px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.adm-fieldset__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* switch: charcoal when on (orange is kept for the one primary key) */
+.adm-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+}
+
+.adm-switch__text {
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.adm-switch__text small {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+
+.adm-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.adm-switch__track {
+  flex: none;
+  position: relative;
+  width: 42px;
+  height: 24px;
+  border-radius: 24px;
+  background: var(--plate);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.14);
+  transition: background-color 160ms var(--ease-out);
+}
+
+.adm-switch__track::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fff, #eceae5);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+  transition: transform 160ms var(--ease-out);
+}
+
+.adm-switch input:checked + .adm-switch__track {
+  background: var(--mod-face);
+}
+
+.dark .adm-switch input:checked + .adm-switch__track {
+  background: var(--foreground);
+}
+
+.adm-switch input:checked + .adm-switch__track::before {
+  transform: translateX(18px);
+}
+
+.adm-switch input:focus-visible + .adm-switch__track {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* icon picker */
+.adm-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 6px;
+}
+
+.adm-icons__item {
+  display: grid;
+  place-items: center;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
+  transition:
+    background-color 120ms var(--ease-out),
+    border-color 120ms var(--ease-out);
+}
+
+.adm-icons__item:hover {
+  border-color: color-mix(in oklab, var(--foreground) 35%, transparent);
+}
+
+.adm-icons__item[aria-checked="true"] {
+  background: var(--mod-face);
+  border-color: var(--mod-face);
+  color: var(--mod-ink);
+}
+
+.adm-icons__item--auto {
+  grid-column: span 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.adm-icons__item:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.link-favicon {
+  display: block;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+/* --------------------------------------------------------------------------
+   Links worklist: each section is a block with its links inside
+   -------------------------------------------------------------------------- */
+
+.adm-sections {
+  display: grid;
+  gap: 16px;
+}
+
+.adm-section {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  box-shadow: 0 1px 0 color-mix(in oklab, var(--key-skirt) 55%, transparent);
+}
+
+.adm-section[data-dragging="true"] {
+  position: relative;
+  z-index: 5;
+  box-shadow: 0 18px 40px -18px rgba(20, 16, 10, 0.45);
+}
+
+.adm-section__head {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px;
+  min-height: 60px;
+  padding: 8px 8px 8px 4px;
+  border-radius: 14px 14px 0 0;
+}
+
+.adm-section__head[data-selected="true"] {
+  background: color-mix(in oklab, var(--plate-hi) 70%, var(--card));
+}
+
+.adm-section__title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  min-width: 0;
+  padding: 6px 4px;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.adm-section__title h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.adm-section__title:hover h2 {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+.adm-section__slug {
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+.adm-section__tools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.adm-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 8px;
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  background: color-mix(in oklab, var(--foreground) 6%, transparent);
+  white-space: nowrap;
+}
+
+.adm-links {
+  border-top: 1px solid var(--border);
+}
+
+.adm-link {
+  display: grid;
+  grid-template-columns: 32px 28px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 4px 10px;
+  min-height: 60px;
+  padding: 6px 8px 6px 4px;
+  border-top: 1px solid var(--border);
+  background: var(--card);
+  transition: background-color 120ms var(--ease-out);
+}
+
+.adm-link:first-child {
+  border-top: 0;
+}
+
+.adm-link:hover {
+  background: color-mix(in oklab, var(--plate-hi) 45%, var(--card));
+}
+
+.adm-link[data-selected="true"] {
+  background: color-mix(in oklab, var(--plate-hi) 80%, var(--card));
+}
+
+.adm-link[data-dragging="true"] {
+  position: relative;
+  z-index: 5;
+  box-shadow: 0 14px 30px -16px rgba(20, 16, 10, 0.5);
+}
+
+.adm-link[data-hidden="true"] .adm-link__icon,
+.adm-link[data-hidden="true"] .adm-link__text {
+  opacity: 0.5;
+}
+
+.adm-link__icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--foreground) 6%, transparent);
+  color: var(--foreground);
+}
+
+.adm-link__text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  padding: 4px 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.adm-link__label {
+  font-size: 15px;
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-link__text:hover .adm-link__label {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+.adm-link__desc {
+  font-size: 13px;
+  color: var(--muted-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-link__host {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-link__clicks {
+  display: grid;
+  justify-items: end;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.15;
+  min-width: 2ch;
+}
+
+.adm-link__tools {
+  display: flex;
+  align-items: center;
+}
+
+.adm-handle {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 40px;
+  border-radius: 8px;
+  color: color-mix(in oklab, var(--muted-foreground) 70%, transparent);
+  cursor: grab;
+  touch-action: none;
+}
+
+.adm-handle:hover {
+  color: var(--foreground);
+  background: color-mix(in oklab, var(--foreground) 6%, transparent);
+}
+
+.adm-handle:active {
+  cursor: grabbing;
+}
+
+.adm-handle:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.adm-section__add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px 0 40px;
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 14px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  text-align: left;
+}
+
+.adm-section__add:hover {
+  color: var(--foreground);
+  background: color-mix(in oklab, var(--plate-hi) 45%, var(--card));
+}
+
+.adm-section__empty {
+  padding: 14px 14px 14px 40px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--muted-foreground);
+}
+
+/* phones: the row drops the tools column, the tools move under the text */
+@media (max-width: 639px) {
+  .adm-link {
+    grid-template-columns: 28px 28px minmax(0, 1fr) auto;
+    column-gap: 8px;
+  }
+  .adm-link__tools {
+    display: none;
+  }
+  .adm-section__head {
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+  }
+  .adm-handle {
+    width: 28px;
+  }
+  .adm-section__add,
+  .adm-section__empty {
+    padding-left: 36px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Empty and first-run states
+   -------------------------------------------------------------------------- */
+
+.adm-empty {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  padding: 28px;
+  border: 1px dashed color-mix(in oklab, var(--foreground) 22%, transparent);
+  border-radius: 14px;
+  color: var(--muted-foreground);
+  max-width: 560px;
+}
+
+.adm-empty h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--foreground);
+}
+
+.adm-empty p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.adm-note {
+  margin: 0 0 16px;
+  max-width: 68ch;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+.adm-note code {
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--foreground);
+}
+
+/* --------------------------------------------------------------------------
+   Settings form page
+   -------------------------------------------------------------------------- */
+
+.adm-form {
+  display: grid;
+  gap: 18px;
+  max-width: 600px;
+}
+
+.adm-form__card {
+  display: grid;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+}
+
+.adm-form__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.adm-avatar {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--mod-face);
+  color: var(--mod-ink);
+  font-size: 24px;
+  font-weight: 800;
+  flex: none;
+}
+
+.adm-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adm-status {
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+/* --------------------------------------------------------------------------
+   Toasts and confirm dialog sit above the tab bar on phones
+   -------------------------------------------------------------------------- */
+
+.adm-toasts {
+  position: fixed;
+  z-index: 100;
+  right: 16px;
+  bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 12px);
+  left: 16px;
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .adm-toasts {
+    left: auto;
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+.adm-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 380px;
+  padding: 10px 10px 10px 14px;
+  border-radius: 12px;
+  background: var(--mod-face);
+  color: var(--mod-ink);
+  font-size: 14px;
+  font-weight: 550;
+  box-shadow:
+    0 3px 0 var(--mod-skirt),
+    0 18px 40px -20px rgba(0, 0, 0, 0.5);
+  animation: adm-toast-in 200ms var(--ease-out);
+}
+
+.adm-toast[data-type="error"] {
+  background: var(--destructive);
+  color: #fff;
+  box-shadow:
+    0 3px 0 color-mix(in oklab, var(--destructive) 55%, black),
+    0 18px 40px -20px rgba(0, 0, 0, 0.5);
+}
+
+.adm-toast button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  color: inherit;
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+.adm-toast button:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+@keyframes adm-toast-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adm-toast {
+    animation: none;
+  }
+}
+
+/* confirm dialog (native <dialog>) */
+.adm-dialog {
+  width: min(420px, calc(100vw - 32px));
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow:
+    0 2px 0 var(--key-skirt),
+    0 40px 80px -30px rgba(20, 16, 10, 0.55);
+}
+
+.adm-dialog[open] {
+  animation: adm-dialog-in 180ms var(--ease-out);
+}
+
+.adm-dialog::backdrop {
+  background: rgba(20, 18, 14, 0.4);
+}
+
+.adm-dialog__body {
+  display: grid;
+  gap: 8px;
+  padding: 22px 22px 18px;
+}
+
+.adm-dialog h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.adm-dialog p {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+.adm-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+@keyframes adm-dialog-in {
+  from {
+    transform: translateY(6px) scale(0.98);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adm-dialog[open] {
+    animation: none;
+  }
+}
+
+.adm-preview[hidden] {
+  display: none;
+}
+
+/* the theme keycap at tool size */
+.adm button.keycap {
+  min-width: 40px;
+  height: 40px;
+}
+
+/* --------------------------------------------------------------------------
+   Dashboard
+   -------------------------------------------------------------------------- */
+
+.adm-dash__body {
+  display: grid;
+  gap: 16px;
+  padding: 0 16px 32px;
+  max-width: 1120px;
+}
+
+@media (min-width: 768px) {
+  .adm-dash__body {
+    padding: 0 28px 40px;
+  }
+}
+
+/* period switch: the held option sits on the charcoal cap */
+.adm-seg {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--plate);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.08);
+}
+
+.adm-seg__item {
+  display: inline-grid;
+  place-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition:
+    background-color 150ms var(--ease-out),
+    color 150ms var(--ease-out);
+}
+
+.adm-seg__item:hover {
+  color: var(--foreground);
+}
+
+.adm-seg__item[aria-current="true"] {
+  background: linear-gradient(180deg, var(--mod-hi), var(--mod-face));
+  color: var(--mod-ink);
+  box-shadow: 0 2px 0 var(--mod-skirt);
+}
+
+.adm-seg__item:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.adm-readout {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  padding: 4px 0 8px;
+}
+
+.adm-readout__hero {
+  margin: 0;
+  font-size: clamp(56px, 8vw, 88px);
+  font-weight: 750;
+  line-height: 0.85;
+  letter-spacing: -0.045em;
+}
+
+.adm-readout__text {
+  display: grid;
+  gap: 4px;
+  padding-bottom: 4px;
+}
+
+.adm-readout__text p {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.adm-readout__muted {
+  font-weight: 400;
+  color: var(--muted-foreground);
+  font-size: 14px;
+}
+
+p.adm-readout__muted {
+  font-size: 13px;
+}
+
+.adm-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+.adm-delta[data-dir="down"] {
+  color: var(--muted-foreground);
+}
+
+.adm-panel-card {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+  padding: 18px 20px 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+}
+
+.adm-panel-card h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.adm-panel-card__empty {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+.adm-panel-card__empty a {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.adm-dash__pair {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .adm-dash__pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ranked bars: name and value on one line, an 8px bar under them */
+.adm-rank {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-rank li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 5px 12px;
+}
+
+.adm-rank__name {
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-rank__value {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.adm-rank__value small {
+  margin-left: 8px;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+
+.adm-rank__bar {
+  grid-column: 1 / -1;
+  height: 8px;
+  min-width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--chart-ink);
+}
+
+/* the column chart */
+.adm {
+  --chart-ink: var(--mod-face);
+  --chart-ink-hi: #4a4a50;
+}
+
+.dark .adm {
+  --chart-ink: #d8d5ce;
+  --chart-ink-hi: #ffffff;
+}
+
+.adm-chart {
+  display: grid;
+  gap: 8px;
+}
+
+.adm-chart__plot {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.adm-chart__plot svg {
+  display: block;
+}
+
+.adm-chart__grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.adm-chart__tick {
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 11px;
+  fill: var(--muted-foreground);
+}
+
+.adm-chart__bar {
+  fill: var(--chart-ink);
+  transition: fill 120ms var(--ease-out);
+}
+
+.adm-chart__bar[data-active] {
+  fill: var(--chart-ink-hi);
+}
+
+.adm-chart__hit {
+  fill: transparent;
+  outline: none;
+}
+
+.adm-chart__hit:focus-visible {
+  stroke: var(--ring);
+  stroke-width: 2;
+}
+
+.adm-chart__tip {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--mod-face);
+  color: var(--mod-ink);
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.5);
+}
+
+.dark .adm-chart__tip {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.adm-chart__tip strong {
+  font-size: 15px;
+}
+
+.adm-chart__table summary,
+.adm-chart__table table {
+  font-size: 13px;
+}
+
+.adm-chart__table summary {
+  width: fit-content;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+
+.adm-chart__table summary:hover {
+  color: var(--foreground);
+}
+
+.adm-chart__table table {
+  margin-top: 8px;
+  border-collapse: collapse;
+}
+
+.adm-chart__table th,
+.adm-chart__table td {
+  padding: 4px 24px 4px 0;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+/* links table */
+.adm-table-wrap {
+  overflow-x: auto;
+  margin: 0 -20px;
+}
+
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.adm-table th {
+  padding: 0 20px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.adm-table td {
+  padding: 10px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.adm-table .adm-num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.adm-table__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.adm-table__link > span:last-child {
+  display: grid;
+  min-width: 0;
+}
+
+.adm-table__link strong {
+  font-weight: 650;
+}
+
+.adm-table__link small {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.adm-muted {
+  color: var(--muted-foreground);
+}
+
+.adm-code {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--plate);
+  font-family: var(--font-mono-ui), ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+@media (max-width: 519px) {
+  .adm-table .adm-col-before {
+    display: none;
+  }
+  .adm-table th,
+  .adm-table td {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .adm-table-wrap {
+    margin: 0 -20px;
+  }
+}
+
+/* portfolio rows reuse the link row with a thumbnail */
+.adm-links--flush {
+  border-top: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.adm-links--flush .adm-link:first-child {
+  border-radius: 14px 14px 0 0;
+}
+
+.adm-links--flush .adm-link:last-child {
+  border-radius: 0 0 14px 14px;
+}
+
+.adm-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-thumb {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 28px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--foreground) 6%, transparent);
+  color: var(--muted-foreground);
+}
+
+.adm-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adm-link--project {
+  grid-template-columns: 32px 44px minmax(0, 1fr) auto auto;
+}
+
+@media (max-width: 639px) {
+  .adm-link--project {
+    grid-template-columns: 28px 44px minmax(0, 1fr) auto;
+  }
+}
+
+.adm-avatar-row {
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: start;
+  gap: 14px;
+}
+
+.adm-avatar-row .adm-avatar {
+  margin-top: 22px;
+}
+
+/* night bench: charcoal on charcoal disappears, so the held item becomes a lit graphite cap */
+.dark .adm-rail__item[aria-current="page"],
+.dark .adm-seg__item[aria-current="true"] {
+  background: linear-gradient(180deg, #4a4a50, var(--key-hi));
+  color: var(--key-ink);
+  box-shadow: 0 3px 0 var(--key-skirt);
+}
+
+.dark .adm-icons__item[aria-checked="true"] {
+  background: var(--foreground);
+  border-color: var(--foreground);
+  color: var(--background);
+}
+
+.dark .adm-switch input:checked + .adm-switch__track::before {
+  background: linear-gradient(180deg, #3a3a3e, #2a2a2d);
+}
+
+/* review fixes ---------------------------------------------------------- */
+
+/* the head: title left, Preview top right (narrow), actions end-aligned below on phones */
+.adm-head__preview {
+  margin-left: auto;
+}
+
+@media (max-width: 639px) {
+  .adm-head__actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (min-width: 640px) {
+  .adm-head__preview + .adm-head__actions {
+    margin-left: 0;
+  }
+  .adm-head__title {
+    margin-right: auto;
+  }
+  .adm-head__preview {
+    margin-left: 0;
+  }
+}
+
+/* orange stays on the one primary key: fields focus in ink */
+.adm .input:focus,
+.adm .select:focus {
+  border-color: var(--foreground);
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.05),
+    0 0 0 1px var(--foreground);
+}
+
+/* dashboard: head and body share one measure */
+.adm-dash > .adm-head {
+  max-width: 1120px;
+}
+
+.adm-panel-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.adm-summary {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+
+.adm-summary strong {
+  font-size: 15px;
+  color: var(--foreground);
+}
+
+.adm-summary__sep {
+  color: var(--border);
+}
+
+.adm-summary__alltime {
+  white-space: nowrap;
+}
+
+@media (max-width: 639px) {
+  /* keep Preview on the title row: the meta wraps under the title instead */
+  .adm-head__title {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .adm-summary__sep {
+    display: none;
+  }
+  .adm-summary__alltime {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 639px) {
+  .adm-dash .adm-head__title {
+    flex-basis: 100%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Restrained colour: state only (up / down, hidden, needs attention).
+   Each comes with an icon or a word, never colour alone.
+   -------------------------------------------------------------------------- */
+
+.adm {
+  --good: #1d7a4a;
+  --bad: #b4321f;
+  --warn: #8a5a00;
+}
+
+.dark .adm {
+  --good: #5cc98c;
+  --bad: #ff8a78;
+  --warn: #e6b24c;
+}
+
+.adm-delta {
+  padding: 1px 6px 1px 4px;
+  border-radius: 6px;
+}
+
+.adm-delta[data-dir="up"] {
+  color: var(--good);
+  background: color-mix(in oklab, var(--good) 12%, transparent);
+}
+
+.adm-delta[data-dir="down"] {
+  color: var(--bad);
+  background: color-mix(in oklab, var(--bad) 11%, transparent);
+}
+
+.adm-tag--warn {
+  color: var(--warn);
+  background: color-mix(in oklab, var(--warn) 13%, transparent);
+}
+
+.adm-tool--off {
+  color: var(--warn);
+}
+
+.adm-toast[data-type="success"] .adm-toast__dot {
+  background: var(--good);
+}
+
+.adm-toast__dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* bilingual fields: EN and ES side by side, tagged */
+.adm-bi {
+  display: grid;
+  gap: 8px;
+}
+
+@media (min-width: 420px) {
+  .adm-bi:not(.adm-bi--stack) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.adm-bi__item {
+  position: relative;
+  display: block;
+}
+
+.adm-bi__lang {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  z-index: 1;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.adm-bi__item .input {
+  padding-right: 34px;
+}
+
+/* repeatable groups in the profile editor */
+.adm-repeat {
+  display: grid;
+  gap: 14px;
+  padding: 12px 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--card) 70%, transparent);
+}
+
+.adm-repeat__head {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: -4px -8px -4px 0;
+}
+
+.adm-repeat__head .adm-tool {
+  width: 32px;
+  height: 32px;
+}
+
+.adm-repeat__title {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-repeat__add {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px dashed color-mix(in oklab, var(--foreground) 25%, transparent);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+
+.adm-repeat__add:hover {
+  color: var(--foreground);
+  border-color: color-mix(in oklab, var(--foreground) 45%, transparent);
+}
+
+.adm-link__state {
+  margin-left: 8px;
+  vertical-align: 2px;
+}
+
+/* the hidden row dims its icon only; the name and its tag stay readable */
+.adm-link[data-hidden="true"] .adm-link__text {
+  opacity: 1;
+}
+
+.adm-link[data-hidden="true"] .adm-link__label,
+.adm-link[data-hidden="true"] .adm-link__host,
+.adm-link[data-hidden="true"] .adm-link__desc {
+  color: var(--muted-foreground);
+}
+
+/* long editors: nothing inside may push the panel wider than its column */
+.adm-panel__body {
+  overflow-x: hidden;
+}
+
+.adm-panel__body > *,
+.adm-fieldset > *,
+.adm-repeat > *,
+.adm-bi__item {
+  min-width: 0;
+}
+
+.adm-repeat__head {
+  margin-right: -4px;
+}
+
+/* --------------------------------------------------------------------------
+   Short links
+   -------------------------------------------------------------------------- */
+
+/* areas without the phone preview: the editor is a sheet at every width */
+@media (min-width: 1180px) {
+  .adm-work[data-sheet] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .adm-work[data-sheet] .adm-pane {
+    display: none;
+  }
+
+  .adm-work[data-sheet] .adm-pane[data-open="true"] {
+    display: flex;
+    position: fixed;
+    z-index: 60;
+    inset: 0 0 0 auto;
+    width: min(var(--pane-w), 100vw);
+    height: auto;
+    box-shadow: -24px 0 60px -30px rgba(20, 16, 10, 0.45);
+    animation: adm-pane-in 200ms var(--ease-out);
+  }
+
+  .adm-work[data-sheet] .adm-scrim[data-open="true"] {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adm-work[data-sheet] .adm-pane[data-open="true"] {
+    animation: none;
+  }
+}
+
+.adm-shorts {
+  max-width: 1120px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.adm-short {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 4px 16px;
+  min-height: 64px;
+  padding: 8px 8px 8px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--card);
+  transition: background-color 120ms var(--ease-out);
+}
+
+.adm-short:first-child {
+  border-top: 0;
+}
+
+.adm-short:hover,
+.adm-short[data-selected="true"] {
+  background: color-mix(in oklab, var(--plate-hi) 45%, var(--card));
+}
+
+.adm-short__main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.adm-short__main:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+.adm-short__code {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.adm-short[data-hidden="true"] .adm-short__code {
+  color: var(--muted-foreground);
+}
+
+.adm-short__label {
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-short__dest {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-short__stats {
+  display: grid;
+  justify-items: end;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  text-align: right;
+}
+
+.adm-short__stats strong {
+  font-size: 18px;
+  line-height: 1.1;
+  color: var(--foreground);
+}
+
+.adm-short__stats small:last-child {
+  white-space: nowrap;
+}
+
+.adm-short__tools {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 639px) {
+  .adm-short {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 10px 6px 6px 14px;
+  }
+  .adm-short__tools {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    margin-top: -4px;
+  }
+}
+
+/* stats page head: a back link above the title */
+.adm-back {
+  flex-basis: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-decoration: none;
+}
+
+.adm-back:hover {
+  color: var(--foreground);
+}
+
+.adm-head h1 .adm-tag {
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.adm-short-head {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.adm-short-head a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+.adm-short-head a:hover {
+  text-decoration: underline;
+}
+
+/* four small readouts above the chart */
+.adm-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .adm-facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.adm-facts > div {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--plate);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.06);
+}
+
+.adm-facts dt {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.adm-facts dd {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.adm-flag {
+  margin-right: 8px;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.adm-nowrap {
+  white-space: nowrap;
+}

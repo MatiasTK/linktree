@@ -18,11 +18,29 @@ export interface Link {
   section_id: number;
   label: string;
   url: string;
+  /** a name from AVAILABLE_ICONS, or 'auto' for the destination's favicon */
   icon_type: string;
+  description: string | null;
   is_visible: number; // 0 or 1
   display_order: number;
   clicks: number;
+  /** code of its short link (/l/<code>), when it has one; admin listings only */
+  short_code?: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
+/** A /l/<code> redirect to any URL, tracked apart from the page's links */
+export interface ShortLink {
+  id: number;
+  code: string;
+  url: string;
+  label: string;
+  is_active: number; // 0 or 1
+  /** all-time human clicks */
+  clicks: number;
+  /** the page link it belongs to; its destination and name follow that link */
+  link_id: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -96,6 +114,7 @@ export interface SectionWithLinks extends Section {
 
 // Icon options for the admin selector
 export const AVAILABLE_ICONS = [
+  'auto',
   'link',
   'github',
   'twitter',
@@ -129,3 +148,26 @@ export const AVAILABLE_ICONS = [
 ] as const;
 
 export type IconType = typeof AVAILABLE_ICONS[number];
+
+// Portfolio project (text fields come in _en / _es pairs)
+export interface Project {
+  id: number;
+  slug: string;
+  name: string;
+  year: string | null;
+  kind_en: string;
+  kind_es: string;
+  summary_en: string;
+  summary_es: string;
+  body_en: string;
+  body_es: string;
+  /** comma-separated */
+  stack: string;
+  image_url: string | null;
+  site_url: string | null;
+  repo_url: string | null;
+  is_visible: number; // 0 or 1
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}

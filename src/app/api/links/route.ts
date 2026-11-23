@@ -43,9 +43,12 @@ export async function POST(request: Request) {
     section_id,
     label,
     url,
-    icon_type: validation.data!.icon_type ?? 'link',
+    icon_type: validation.data!.icon_type ?? 'auto',
+    description: validation.data!.description ?? null,
     is_visible: validation.data!.is_visible ?? true,
     display_order: validation.data!.display_order,
+    short_link: validation.data!.short_link ?? true,
+    short_code: validation.data!.short_code ?? null,
   });
 
   if (result.success) {

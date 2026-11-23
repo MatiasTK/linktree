@@ -1,14 +1,16 @@
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
+import { Bricolage_Grotesque, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const display = Bricolage_Grotesque({
+  variable: '--font-display',
+  weight: ['400', '500', '600', '700', '800'],
   subsets: ['latin'],
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const mono = JetBrains_Mono({
+  variable: '--font-mono-ui',
+  weight: ['400', '500', '700'],
   subsets: ['latin'],
 });
 
@@ -28,6 +30,13 @@ export const metadata: Metadata = {
     title: 'My Links',
     description: 'All my important links in one place',
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ecebe7' },
+    { media: '(prefers-color-scheme: dark)', color: '#1c1c1e' },
+  ],
 };
 
 export default function RootLayout({
@@ -54,7 +63,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}>
+      <body className={`${display.variable} ${mono.variable} antialiased min-h-screen`}>
         {children}
       </body>
     </html>

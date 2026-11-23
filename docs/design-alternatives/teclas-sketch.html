@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teclas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ecebe7;--case:#d6d3cc;--key:#f7f6f3;--keyside:#d9d6cf;--mod:#2b2b2e;--modside:#151517;--acc:#ff5a1f;--accside:#c63d0a;--ink:#1c1c1e;--mute:#7a776f}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1440px;height:900px;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",sans-serif;position:relative}
+.top{position:absolute;left:80px;right:80px;top:40px;display:flex;justify-content:space-between;font:500 13px "JetBrains Mono";color:var(--mute);letter-spacing:.04em}
+.top b{color:var(--ink);font-weight:700}
+.intro{position:absolute;left:80px;top:180px;width:520px}
+.intro small{font:500 14px "JetBrains Mono";color:var(--acc);letter-spacing:.06em}
+.intro h1{font:800 132px/0.88 "Bricolage Grotesque";letter-spacing:-.05em;margin:18px 0 28px}
+.intro p{font:400 22px/1.45 "Bricolage Grotesque";color:#3d3b37;max-width:430px}
+.hint{position:absolute;left:80px;bottom:72px;display:flex;align-items:center;gap:12px;font:500 14px "JetBrains Mono";color:var(--mute)}
+.mini{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:7px;background:var(--key);box-shadow:0 3px 0 var(--keyside),0 4px 6px rgba(0,0,0,.12);font:700 13px "JetBrains Mono";color:var(--ink)}
+/* the board */
+.board{position:absolute;left:690px;top:120px;width:670px;height:660px;border-radius:34px;background:linear-gradient(180deg,#dedbd4,#cfccc4);box-shadow:inset 0 2px 0 #fff8,inset 0 -3px 0 #0001,0 40px 80px -30px rgba(40,30,20,.35),0 2px 0 #b9b5ac;padding:34px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 96px;gap:22px}
+.k{position:relative;border-radius:22px;background:var(--keyside);padding:0 0 12px}
+.k .cap{position:absolute;inset:0 0 12px 0;border-radius:22px;background:linear-gradient(180deg,#fff,var(--key) 40%,#efede8);box-shadow:inset 0 -10px 18px -10px rgba(0,0,0,.12),inset 0 2px 0 #fff;padding:26px 28px;display:flex;flex-direction:column;justify-content:space-between}
+.k .cap::after{content:"";position:absolute;inset:14px 18px 22px;border-radius:16px;background:radial-gradient(ellipse at 50% 35%,rgba(255,255,255,.8),transparent 70%);pointer-events:none}
+.k .n{font:700 16px "JetBrains Mono";color:var(--mute);display:flex;justify-content:space-between}
+.k b{font:700 46px/1 "Bricolage Grotesque";letter-spacing:-.03em;position:relative;z-index:1}
+.k em{font:500 14px "JetBrains Mono";font-style:normal;color:var(--mute);display:block;margin-top:8px}
+.k.acc{background:var(--accside)} .k.acc .cap{background:linear-gradient(180deg,#ff7a45,var(--acc) 45%,#f2521a);color:#fff}
+.k.acc .cap::after{background:radial-gradient(ellipse at 50% 30%,rgba(255,255,255,.35),transparent 70%)}
+.k.acc .n,.k.acc em{color:#ffe1d4}
+.k.dark{background:var(--modside)} .k.dark .cap{background:linear-gradient(180deg,#3a3a3e,var(--mod) 45%,#252528);color:#f3f2ee}
+.k.dark .cap::after{background:radial-gradient(ellipse at 50% 30%,rgba(255,255,255,.08),transparent 70%)}
+.k.down .cap{transform:translateY(5px);inset:0 0 7px 0}
+.space{grid-column:1/3;position:relative;border-radius:20px;background:var(--keyside);padding-bottom:10px}
+.space .cap{position:absolute;inset:0 0 10px 0;border-radius:20px;background:linear-gradient(180deg,#fff,var(--key) 45%,#efede8);display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:500 15px "JetBrains Mono";color:var(--mute)}
+.space .cap b{color:var(--ink)}
+.led{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);display:inline-block;margin-right:10px}
+.arrow{width:22px;height:22px}
+</style></head><body>
+<div class="top"><span><b>matiastk</b> / links</span><span>Buenos Aires · 17:42</span></div>
+<div class="intro">
+ <small>&gt; HOLA, SOY</small>
+ <h1>Matías</h1>
+ <p>Ingeniero de software. Construyo cosas para la web, del servidor al último píxel.</p>
+</div>
+<div class="hint"><span class="mini">1</span><span class="mini">2</span><span class="mini">3</span><span class="mini">4</span> apretá un número o tocá una tecla</div>
+<div class="board">
+ <div class="k acc"><div class="cap"><span class="n"><span>1</span><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M7 17 17 7M9 7h8v8"/></svg></span><div><b>Proyectos</b><em>6 links</em></div></div></div>
+ <div class="k"><div class="cap"><span class="n"><span>2</span><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="#7a776f" stroke-width="2.2"><path d="M7 17 17 7M9 7h8v8"/></svg></span><div><b>Contacto</b><em>3 links</em></div></div></div>
+ <div class="k down"><div class="cap"><span class="n"><span>3 · visitado</span><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="#7a776f" stroke-width="2.2"><path d="M5 12l5 5 9-10"/></svg></span><div><b>Redes</b><em>4 links</em></div></div></div>
+ <div class="k dark"><div class="cap"><span class="n" style="color:#a3a09a"><span>4</span><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="#a3a09a" stroke-width="2.2"><path d="M7 17 17 7M9 7h8v8"/></svg></span><div><b>Escritos</b><em style="color:#a3a09a">2 links</em></div></div></div>
+ <div class="space"><div class="cap"><span><i class="led"></i><b>Hecho por MatiasTK</b></span><span>github.com/MatiasTK ↗</span></div></div>
+</div>
+</body></html>
