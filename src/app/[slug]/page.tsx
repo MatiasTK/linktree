@@ -72,6 +72,7 @@ export default async function SectionPage({ params }: PageProps) {
               label={link.label}
               meta={hostOf(link.url)}
               icon={link.icon_type}
+              description={link.description}
               href={link.url}
               external
               linkId={link.id}

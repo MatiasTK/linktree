@@ -26,6 +26,19 @@ function markVisited(href: string) {
   }
 }
 
+const ENTRY_REFERRER_KEY = 'entry-referrer';
+
+/** The referrer the visit started with, kept across internal navigation for the click's source. */
+function entryReferrer(): string {
+  try {
+    const external = document.referrer && new URL(document.referrer).host !== location.host;
+    if (external) sessionStorage.setItem(ENTRY_REFERRER_KEY, document.referrer);
+    return sessionStorage.getItem(ENTRY_REFERRER_KEY) ?? '';
+  } catch {
+    return '';
+  }
+}
+
 function isTypingTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) return false;
   return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
@@ -40,6 +53,9 @@ function isTypingTarget(target: EventTarget | null) {
 export function KeyboardNav() {
   useEffect(() => {
     const visited = new Set(readVisited());
+    const ref = entryReferrer();
+    // the admin's live preview frames these pages: its clicks are not traffic
+    const framed = window.self !== window.top;
     document.querySelectorAll<HTMLElement>('[data-key-href]').forEach((el) => {
       if (visited.has(el.dataset.keyHref ?? '')) el.dataset.visited = '';
     });
@@ -53,7 +69,7 @@ export function KeyboardNav() {
         key.dataset.visited = '';
       }
       const linkId = key.dataset.linkId;
-      if (linkId) navigator.sendBeacon?.(`/api/links/${linkId}/click`);
+      if (linkId && !framed) navigator.sendBeacon?.(`/api/links/${linkId}/click`, JSON.stringify({ ref }));
     };
 
     const KEY_SELECTOR = '.key, .keycap';

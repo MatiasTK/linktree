@@ -1,8 +1,9 @@
-// Profile copy for /portfolio. It rarely changes, so it lives in code; projects live in D1.
+// Profile copy for /portfolio. The owner edits it in /admin/portfolio (stored in D1 as the
+// `portfolio_profile` setting); `defaultProfile` is the fallback until it is first saved.
 // Every visible string has an English and a Spanish version.
 
 export type Lang = 'en' | 'es';
-type T = Record<Lang, string>;
+export type T = Record<Lang, string>;
 
 export interface SpecRow {
   label: T;
@@ -31,7 +32,29 @@ export interface Credential {
   url?: string;
 }
 
-export const profile = {
+export interface WorkNote {
+  title: T;
+  body: T;
+}
+
+export interface PortfolioProfile {
+  name: string;
+  thesis: T;
+  email: string;
+  linkedin: string;
+  github: string;
+  /** the CV key stays hidden while this is empty */
+  cvUrl: string | null;
+  spec: SpecRow[];
+  experience: Experience[];
+  howIWork: WorkNote[];
+  stack: StackGroup[];
+  education: { name: T; school: T };
+  credentials: Credential[];
+  contact: { title: T; body: T };
+}
+
+export const defaultProfile: PortfolioProfile = {
   name: 'Matías Vallejos',
   thesis: {
     en: 'I build products end to end, from backend services to the microfrontends people use.',
@@ -40,8 +63,7 @@ export const profile = {
   email: 'matiavallejo@gmail.com',
   linkedin: 'https://www.linkedin.com/in/matiasvallejosdev/',
   github: 'https://github.com/MatiasTK',
-  // TODO(owner): add the CV URL once the updated CV is hosted; the CV key stays hidden while this is null.
-  cvUrl: null as string | null,
+  cvUrl: null,
 
   // the role, company and dates sit under the name; the sheet holds what I work with
   spec: [
@@ -135,7 +157,6 @@ export const profile = {
     school: { en: 'University of Buenos Aires (FIUBA)', es: 'Universidad de Buenos Aires (FIUBA)' } satisfies T,
   },
 
-  // TODO(owner): paste each public credential URL from LinkedIn into `url`.
   credentials: [
     { name: 'Back End Development and APIs', issuer: 'freeCodeCamp', date: { en: 'May 2022', es: 'May. 2022' } },
     { name: 'Front End Development Libraries', issuer: 'freeCodeCamp', date: { en: 'Apr 2022', es: 'Abr. 2022' } },
@@ -146,6 +167,14 @@ export const profile = {
       date: { en: 'Mar 2022', es: 'Mar. 2022' },
     },
   ] as Credential[],
+
+  contact: {
+    title: { en: 'Let’s talk', es: 'Hablemos' },
+    body: {
+      en: 'Happy to talk about frontend architecture, full-stack product work or anything you saw here.',
+      es: 'Con gusto hablamos de arquitectura frontend, desarrollo de producto full-stack o de cualquier cosa que viste acá.',
+    },
+  },
 };
 
 /** UI strings for the portfolio pages. */
@@ -162,11 +191,6 @@ export const ui = {
   howIWork: { en: 'How I work', es: 'Cómo trabajo' },
   stack: { en: 'Stack', es: 'Stack' },
   education: { en: 'Education', es: 'Formación' },
-  contactTitle: { en: 'Let’s talk', es: 'Hablemos' },
-  contactBody: {
-    en: 'Happy to talk about frontend architecture, full-stack product work or anything you saw here.',
-    es: 'Con gusto hablamos de arquitectura frontend, desarrollo de producto full-stack o de cualquier cosa que viste acá.',
-  },
   caseStudy: { en: 'Read the case', es: 'Ver el caso' },
   visit: { en: 'Visit', es: 'Visitar' },
   code: { en: 'Code', es: 'Código' },

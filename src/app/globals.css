@@ -617,6 +617,28 @@ a {
   line-height: 1.12;
 }
 
+.key__desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--legend);
+  text-wrap: pretty;
+}
+
+/* favicons sit in the legend row like any other glyph: same size, ink-toned */
+.key--link .key__icon .link-favicon {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  filter: grayscale(1) contrast(1.1);
+  opacity: 0.85;
+}
+
 .key__meta {
   display: block;
   margin-top: 6px;

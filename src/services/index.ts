@@ -12,3 +12,4 @@ export type { SectionFilters, CreateSectionData, UpdateSectionData } from './sec
 export type { LinkFilters, CreateLinkData, UpdateLinkData } from './links.service';
 export type { LoginResult } from './auth.service';
 export type { DashboardStats } from './stats.service';
+export { portfolioProfileService } from './portfolio-profile.service';

@@ -32,7 +32,7 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <button type="button" className="keycap" aria-label="Toggle theme">
-        <span className="w-4 h-4" />
+        <Moon className="w-4 h-4" aria-hidden />
       </button>
     );
   }

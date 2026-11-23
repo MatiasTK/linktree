@@ -1,9 +1,9 @@
-import { type Lang, profile, ui } from '@/content/portfolio';
+import { type Lang, type PortfolioProfile, ui } from '@/content/portfolio';
 
-const job = profile.experience[0];
+type Props = { lang: Lang; profile: PortfolioProfile };
 
 /** The spec sheet beside the name: what I work with. */
-export function SpecSheet({ lang }: { lang: Lang }) {
+export function SpecSheet({ lang, profile }: Props) {
   return (
     <aside className="board pf-spec" aria-labelledby="pf-spec-title">
       <div className="pf-sheet">
@@ -25,7 +25,9 @@ export function SpecSheet({ lang }: { lang: Lang }) {
 }
 
 /** The current role as the hero's second line, right under the name. */
-export function NowLine({ lang }: { lang: Lang }) {
+export function NowLine({ lang, profile }: Props) {
+  const job = profile.experience[0];
+  if (!job) return null;
   return (
     <p className="pf-now">
       <span className="pf-now__role">
@@ -39,7 +41,7 @@ export function NowLine({ lang }: { lang: Lang }) {
 }
 
 /** The experience in full, first section after the opening screen. */
-export function ExperienceSection({ lang }: { lang: Lang }) {
+export function ExperienceSection({ lang, profile }: Props) {
   return (
     <section id="experience" tabIndex={-1} className="pf-section" aria-labelledby="pf-exp">
       <h2 id="pf-exp" className="pf-h2">

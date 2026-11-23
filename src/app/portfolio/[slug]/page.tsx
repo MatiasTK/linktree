@@ -2,8 +2,8 @@ import { KeyboardNav, Keycap } from '@/components/keys';
 import { PortfolioBar } from '@/components/portfolio/PortfolioBar';
 import { ProjectBody } from '@/components/portfolio/ProjectBody';
 import { ProjectShot } from '@/components/portfolio/ProjectShot';
-import { type Lang, langFrom, profile, projectText, ui } from '@/content/portfolio';
-import { projectsService } from '@/services';
+import { type Lang, langFrom, projectText, ui } from '@/content/portfolio';
+import { portfolioProfileService, projectsService } from '@/services';
 import { ArrowUpRight, Code } from 'lucide-react';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
@@ -22,6 +22,7 @@ async function resolveLang(searchParams: PageProps['searchParams']): Promise<Lan
 }
 
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+  const profile = await portfolioProfileService.get();
   const [{ slug }, lang] = await Promise.all([params, resolveLang(searchParams)]);
   const project = await projectsService.getVisibleBySlug(slug);
   if (!project) return { title: 'Not Found' };
@@ -51,6 +52,7 @@ function hostOf(url: string) {
 }
 
 export default async function ProjectPage({ params, searchParams }: PageProps) {
+  const profile = await portfolioProfileService.get();
   const [{ slug }, lang] = await Promise.all([params, resolveLang(searchParams)]);
   const [project, all] = await Promise.all([
     projectsService.getVisibleBySlug(slug),

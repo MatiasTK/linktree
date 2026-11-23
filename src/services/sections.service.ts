@@ -211,6 +211,21 @@ export const sectionsService = {
   },
 
   /**
+   * Set display_order for all sections, in the given order
+   */
+  async reorder(ids: number[]): Promise<ServiceResult<{ reordered: number }>> {
+    try {
+      for (let i = 0; i < ids.length; i++) {
+        await execute('UPDATE sections SET display_order = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [i, ids[i]]);
+      }
+      return { success: true, data: { reordered: ids.length } };
+    } catch (error) {
+      console.error('Error reordering sections:', error);
+      return { success: false, error: 'Failed to reorder sections', status: 500 };
+    }
+  },
+
+  /**
    * Delete a section
    */
   async delete(id: number): Promise<ServiceResult<{ deleted: boolean }>> {

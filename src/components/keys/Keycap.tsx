@@ -1,4 +1,4 @@
-import { Icon } from '@/components/atoms';
+import { Icon, LinkIcon } from '@/components/atoms';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import type { CSSProperties, ReactNode } from 'react';
@@ -12,6 +12,8 @@ interface KeycapProps {
   meta?: string;
   tone?: KeyTone;
   icon?: string;
+  /** link keys: the destination's description, under the name */
+  description?: string | null;
   /** internal route (section) or external URL (link) */
   href: string;
   external?: boolean;
@@ -28,7 +30,18 @@ function ArrowGlyph({ external }: { external?: boolean }) {
   );
 }
 
-export function Keycap({ index, label, meta, tone = 'plain', icon, href, external, linkId, className: extraClass }: KeycapProps) {
+export function Keycap({
+  index,
+  label,
+  meta,
+  description,
+  tone = 'plain',
+  icon,
+  href,
+  external,
+  linkId,
+  className: extraClass,
+}: KeycapProps) {
   const shortcut = index <= 9 ? String(index) : undefined;
   const className = cn(
     'key',
@@ -50,7 +63,7 @@ export function Keycap({ index, label, meta, tone = 'plain', icon, href, externa
       <span className="key__body">
         {icon && (
           <span className="key__icon" aria-hidden>
-            <Icon name={icon} size={20} />
+            {external ? <LinkIcon iconType={icon} url={href} size={20} /> : <Icon name={icon} size={20} />}
           </span>
         )}
         <span className="key__text">
@@ -58,6 +71,7 @@ export function Keycap({ index, label, meta, tone = 'plain', icon, href, externa
             {/* keep a spaced dash with the word before it, so a line never starts with "- " */}
             {label.replace(/ ([-–—]) /g, '\u00a0$1 ')}
           </span>
+          {description && <span className="key__desc">{description}</span>}
           {meta && <span className="key__meta">{meta}</span>}
         </span>
       </span>

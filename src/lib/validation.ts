@@ -7,7 +7,7 @@ export const MAX_LENGTHS = {
   label: 100,
   url: 2000,
   description: 500,
-
+  link_description: 140,
   profile_initial: 1,
   profile_image_url: 2000,
   site_title: 100,
@@ -70,7 +70,7 @@ export function validateIconType(iconType: string): IconType {
   if (AVAILABLE_ICONS.includes(iconType as IconType)) {
     return iconType as IconType;
   }
-  return 'link'; // Default fallback
+  return 'auto'; // Default: the destination's favicon
 }
 
 /**
@@ -144,9 +144,9 @@ export function validateLinkData(data: Record<string, unknown>): ValidationResul
   label?: string;
   url?: string;
   icon_type?: IconType;
+  description?: string | null;
   is_visible?: boolean;
   display_order?: number;
-
 }> {
   const result: Record<string, unknown> = {};
 
@@ -186,7 +186,10 @@ export function validateLinkData(data: Record<string, unknown>): ValidationResul
     result.display_order = validatePositiveInt(data.display_order);
   }
 
-
+  if ('description' in data) {
+    const description = sanitizeString(data.description, MAX_LENGTHS.link_description);
+    result.description = description.length > 0 ? description : null;
+  }
 
   return { success: true, data: result };
 }

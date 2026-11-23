@@ -22,18 +22,19 @@ export interface CreateLinkData {
   label: string;
   url: string;
   icon_type?: string;
+  description?: string | null;
   is_visible?: boolean;
   display_order?: number;
-
 }
 
 export interface UpdateLinkData {
+  section_id?: number;
   label?: string;
   url?: string;
   icon_type?: string;
+  description?: string | null;
   is_visible?: boolean;
   display_order?: number;
-
 }
 
 // ============================================================================
@@ -109,13 +110,14 @@ export const linksService = {
       }
 
       const result = await execute(
-        `INSERT INTO links (section_id, label, url, icon_type, is_visible, display_order)
-         VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO links (section_id, label, url, icon_type, description, is_visible, display_order)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
           data.section_id,
           data.label,
           data.url,
-          data.icon_type ?? 'link',
+          data.icon_type ?? 'auto',
+          data.description ?? null,
           boolToInt(data.is_visible ?? true),
           displayOrder,
         ]
@@ -148,8 +150,18 @@ export const linksService = {
         return { success: false, error: 'Link not found', status: 404 };
       }
 
+      // Moving to another section: append at its end and close the gap left behind
+      const moving = data.section_id !== undefined && data.section_id !== existing.section_id;
+      if (moving) {
+        const maxResult = await queryFirst<{ max_order: number }>(
+          'SELECT COALESCE(MAX(display_order), -1) as max_order FROM links WHERE section_id = ?',
+          [data.section_id]
+        );
+        data = { ...data, display_order: (maxResult?.max_order ?? -1) + 1 };
+      }
+
       // Handle display_order conflict within same section
-      if (data.display_order !== undefined) {
+      if (!moving && data.display_order !== undefined) {
         const swapResult = await handleDisplayOrderSwap({
           table: 'links',
           currentItem: existing,
@@ -170,6 +182,8 @@ export const linksService = {
           { field: 'label', column: 'label' },
           { field: 'url', column: 'url' },
           { field: 'icon_type', column: 'icon_type' },
+          { field: 'description', column: 'description' },
+          { field: 'section_id', column: 'section_id' },
           { field: 'is_visible', column: 'is_visible', transform: boolToInt },
           { field: 'display_order', column: 'display_order' },
 
@@ -178,6 +192,13 @@ export const linksService = {
 
       if (fieldCount === 0) {
         return { success: false, error: 'No fields to update', status: 400 };
+      }
+
+      if (moving) {
+        await execute(
+          'UPDATE links SET display_order = display_order - 1, updated_at = CURRENT_TIMESTAMP WHERE section_id = ? AND display_order > ?',
+          [existing.section_id, existing.display_order]
+        );
       }
 
       const updated = await queryFirst<Link>('SELECT * FROM links WHERE id = ?', [id]);
@@ -213,14 +234,36 @@ export const linksService = {
   },
 
   /**
-   * Track a link click (fire-and-forget operation)
+   * Set display_order for the links of one section, in the given order
    */
-  async trackClick(id: number | string): Promise<void> {
+  async reorder(ids: number[]): Promise<ServiceResult<{ reordered: number }>> {
     try {
-      await execute(
-        'UPDATE links SET clicks = clicks + 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-        [id]
-      );
+      for (let i = 0; i < ids.length; i++) {
+        await execute('UPDATE links SET display_order = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [i, ids[i]]);
+      }
+      return { success: true, data: { reordered: ids.length } };
+    } catch (error) {
+      console.error('Error reordering links:', error);
+      return { success: false, error: 'Failed to reorder links', status: 500 };
+    }
+  },
+
+  /**
+   * Track a link click (fire-and-forget operation): bump the all-time counter
+   * and record one dated event for the dashboard.
+   */
+  async trackClick(id: number, source: string): Promise<void> {
+    try {
+      const link = await queryFirst<Pick<Link, 'id' | 'section_id'>>('SELECT id, section_id FROM links WHERE id = ?', [id]);
+      if (!link) return;
+      await execute('UPDATE links SET clicks = clicks + 1 WHERE id = ?', [id]);
+      // fails quietly until migration 0008 is applied; the counter above still works
+      await execute('INSERT INTO click_events (link_id, section_id, source, created_at) VALUES (?, ?, ?, ?)', [
+        link.id,
+        link.section_id,
+        source,
+        Date.now(),
+      ]).catch((error) => console.error('Error recording click event:', error));
     } catch (error) {
       console.error('Error tracking click:', error);
     }

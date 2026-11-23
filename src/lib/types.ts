@@ -18,7 +18,9 @@ export interface Link {
   section_id: number;
   label: string;
   url: string;
+  /** a name from AVAILABLE_ICONS, or 'auto' for the destination's favicon */
   icon_type: string;
+  description: string | null;
   is_visible: number; // 0 or 1
   display_order: number;
   clicks: number;
@@ -96,6 +98,7 @@ export interface SectionWithLinks extends Section {
 
 // Icon options for the admin selector
 export const AVAILABLE_ICONS = [
+  'auto',
   'link',
   'github',
   'twitter',

@@ -4,9 +4,9 @@ import { ExperienceSection, NowLine, SpecSheet } from '@/components/portfolio/Ex
 import { PortfolioNav } from '@/components/portfolio/PortfolioNav';
 import { ScrollTopLink } from '@/components/portfolio/ScrollTopLink';
 import { ProjectShot } from '@/components/portfolio/ProjectShot';
-import { type Lang, langFrom, profile, projectText, ui } from '@/content/portfolio';
+import { type Lang, langFrom, projectText, ui } from '@/content/portfolio';
 import type { Project } from '@/lib/types';
-import { projectsService } from '@/services';
+import { portfolioProfileService, projectsService } from '@/services';
 import { ArrowRight, ArrowUpRight, Code, Download, Github, Linkedin, Mail } from 'lucide-react';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
@@ -24,6 +24,7 @@ async function resolveLang(searchParams: PageProps['searchParams']): Promise<Lan
 }
 
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const profile = await portfolioProfileService.get();
   const lang = await resolveLang(searchParams);
   const title = `${profile.name} · Portfolio`;
   const description = profile.thesis[lang];
@@ -50,6 +51,7 @@ function ExternalLabel({ lang }: { lang: Lang }) {
 }
 
 export default async function PortfolioPage({ searchParams }: PageProps) {
+  const profile = await portfolioProfileService.get();
   const lang = await resolveLang(searchParams);
   const projects = await projectsService.getVisible();
   const navItems = [
@@ -57,7 +59,7 @@ export default async function PortfolioPage({ searchParams }: PageProps) {
     ...(projects.length > 0 ? [{ id: 'projects', label: ui.projects[lang] }] : []),
     { id: 'how-i-work', label: ui.howIWork[lang] },
     { id: 'stack', label: ui.stackAndEducation[lang] },
-    { id: 'contact', label: ui.contactTitle[lang] },
+    { id: 'contact', label: profile.contact.title[lang] },
   ];
   const sectionNav = <PortfolioNav items={navItems} label={ui.sections[lang]} />;
   const q = `?lang=${lang}`;
@@ -88,7 +90,7 @@ export default async function PortfolioPage({ searchParams }: PageProps) {
               <br />
               {rest.join(' ')}
             </h1>
-            <NowLine lang={lang} />
+            <NowLine lang={lang} profile={profile} />
             <p className="pf-thesis">{profile.thesis[lang]}</p>
             <div className="pf-actions">
               <a className="key key--accent pf-act" href={`mailto:${profile.email}`}>
@@ -126,11 +128,11 @@ export default async function PortfolioPage({ searchParams }: PageProps) {
               )}
             </div>
           </div>
-          <SpecSheet lang={lang} />
+          <SpecSheet lang={lang} profile={profile} />
         </section>
       </div>
 
-      <ExperienceSection lang={lang} />
+      <ExperienceSection lang={lang} profile={profile} />
 
       <section id="projects" tabIndex={-1} className="pf-section" aria-labelledby="pf-projects">
         <h2 id="pf-projects" className="pf-h2">
@@ -251,9 +253,9 @@ export default async function PortfolioPage({ searchParams }: PageProps) {
       <section id="contact" tabIndex={-1} className="board pf-contact" aria-labelledby="pf-contact">
         <div>
           <h2 id="pf-contact" className="pf-contact__title">
-            {ui.contactTitle[lang]}
+            {profile.contact.title[lang]}
           </h2>
-          <p>{ui.contactBody[lang]}</p>
+          <p>{profile.contact.body[lang]}</p>
         </div>
         <a className="key key--accent pf-act pf-act--wide" href={`mailto:${profile.email}`}>
           <span className="key__cap">

@@ -12,12 +12,9 @@ export function LogoutButton() {
   }
 
   return (
-    <button
-      onClick={handleLogout}
-      className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors text-sm"
-    >
-      <LogOut size={16} />
-      <span>Logout</span>
+    <button type="button" onClick={handleLogout} className="adm-tool adm-tool--danger" title="Log out">
+      <LogOut size={18} aria-hidden />
+      <span className="sr-only">Log out</span>
     </button>
   );
 }

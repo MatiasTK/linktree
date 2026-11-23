@@ -63,21 +63,32 @@ Custom session-based auth in `src/lib/auth.ts`:
 
 RESTful design in `src/app/api/`:
 - `auth/` - Login/logout
-- `sections/` - Sections CRUD
-- `links/` - Links CRUD + click tracking
+- `sections/` - Sections CRUD + `reorder`
+- `links/` - Links CRUD + `reorder` + click tracking (`[id]/click` records a `click_events` row with its source)
 - `settings/` - Global settings key-value store
 - `projects/` - Portfolio projects CRUD + `reorder`
+- `portfolio-profile/` - GET/PUT the /portfolio profile copy
+- `favicon/[host]` - edge-cached favicon proxy, used when a link's icon is `auto`
 
 ### Database Schema
 
 - **sections**: slug, title, order, visibility
-- **links**: icon, URL, click count, group, order
+- **links**: icon (`auto` = the destination's favicon), URL, optional description, all-time click count, order
+- **click_events**: one row per click (link, section, source, epoch ms) for the dashboard (`migrations/0008_admin_redesign.sql`)
 - **settings**: key-value store
 - **login_attempts**: rate limiting
 - **projects**: portfolio projects (bilingual `_en`/`_es` text, stack, image/site/repo URLs, order, visibility)
 
+### Admin
+
+- Four areas: Dashboard (`/admin`, click stats from `click_events`), Links (sections and their links in one view), Portfolio, Settings
+- Pages are server components that pass data to client workspaces in `src/components/admin/`
+- `Workbench` lays out the list plus a right pane: a live phone preview (an iframe of the public page) that the editor panel replaces while open; docked from 1180px, a sheet below
+- Styles live in `src/app/admin/admin.css`; the design direction is in `.impeccable/surfaces/src-app-admin-page-tsx.md`
+- Public pages skip click tracking when framed (the preview)
+
 ### Portfolio
 
 - `/portfolio` and `/portfolio/[slug]`: ES/EN via `?lang=` (falls back to Accept-Language)
-- Projects live in D1 (`migrations/0007_portfolio.sql`, edited in `/admin/portfolio`); profile, experience, stack and education live in `src/content/portfolio.ts`
+- Projects live in D1 (`migrations/0007_portfolio.sql`); the profile (name, headline, spec sheet, experience, how I work, stack, education, credentials, contact text) is a JSON `portfolio_profile` row in `settings`, read through `portfolioProfileService` and sanitized by `src/lib/portfolio-profile.ts`. Both are edited in `/admin/portfolio`; `defaultProfile` in `src/content/portfolio.ts` is the fallback until the first save. UI chrome strings stay in `ui` there
 - `portfolio` is a reserved slug (`RESERVED_SLUGS` in `src/lib/validation.ts`)
