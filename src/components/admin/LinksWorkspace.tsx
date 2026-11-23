@@ -379,7 +379,10 @@ function LinkRow({ link, selected, onOpen, onToggle }: LinkRowProps) {
               {hidden && <span className="adm-tag adm-tag--warn adm-link__state">hidden</span>}
             </span>
             {link.description && <span className="adm-link__desc">{link.description}</span>}
-            <span className="adm-link__host adm-mono">{hostOf(link.url)}</span>
+            <span className="adm-link__host adm-mono">
+              {hostOf(link.url)}
+              {link.short_code && <span className="adm-link__short"> · /l/{link.short_code}</span>}
+            </span>
           </button>
           <span className="adm-link__clicks adm-mono" title="All-time clicks" aria-label={`${link.clicks} clicks`}>
             {link.clicks}

@@ -43,7 +43,7 @@ export function validateUrl(url: string): string | null {
 }
 
 /** Paths owned by fixed routes; a section with one of these slugs would be unreachable. */
-export const RESERVED_SLUGS = ['admin', 'login', 'api', 'keys', 'sounds', 'type', 'portfolio'];
+export const RESERVED_SLUGS = ['admin', 'login', 'api', 'keys', 'sounds', 'type', 'portfolio', 'l'];
 
 /**
  * Validate and sanitize a slug
@@ -147,8 +147,22 @@ export function validateLinkData(data: Record<string, unknown>): ValidationResul
   description?: string | null;
   is_visible?: boolean;
   display_order?: number;
+  short_link?: boolean;
+  short_code?: string | null;
 }> {
   const result: Record<string, unknown> = {};
+
+  if ('short_link' in data) {
+    result.short_link = Boolean(data.short_link);
+  }
+
+  if ('short_code' in data && data.short_code !== null && data.short_code !== '') {
+    const code = validateShortCode(data.short_code);
+    if (code === null) {
+      return { success: false, error: `Use up to ${SHORT_CODE_MAX} lowercase letters, numbers and hyphens for the short code.` };
+    }
+    result.short_code = code;
+  }
 
   if ('section_id' in data) {
     const sectionId = validatePositiveInt(data.section_id, -1);
@@ -189,6 +203,55 @@ export function validateLinkData(data: Record<string, unknown>): ValidationResul
   if ('description' in data) {
     const description = sanitizeString(data.description, MAX_LENGTHS.link_description);
     result.description = description.length > 0 ? description : null;
+  }
+
+  return { success: true, data: result };
+}
+
+export const SHORT_CODE_MAX = 40;
+
+/** Short link codes: lowercase letters, digits and inner hyphens, like a slug. */
+export function validateShortCode(code: unknown): string | null {
+  if (typeof code !== 'string') return null;
+  const trimmed = code.trim().toLowerCase();
+  if (trimmed.length === 0 || trimmed.length > SHORT_CODE_MAX) return null;
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(trimmed) ? trimmed : null;
+}
+
+/**
+ * Validate short link creation/update data. Destinations must be http(s):
+ * a redirect to mailto: or tel: works unevenly across apps.
+ */
+export function validateShortLinkData(data: Record<string, unknown>): ValidationResult<{
+  code?: string;
+  url?: string;
+  label?: string;
+  is_active?: boolean;
+}> {
+  const result: Record<string, unknown> = {};
+
+  if ('code' in data && data.code !== '' && data.code !== null && data.code !== undefined) {
+    const code = validateShortCode(data.code);
+    if (code === null) {
+      return { success: false, error: `Use up to ${SHORT_CODE_MAX} lowercase letters, numbers and hyphens for the code.` };
+    }
+    result.code = code;
+  }
+
+  if ('url' in data) {
+    const url = validateUrl(data.url as string);
+    if (url === null || !/^https?:/i.test(url)) {
+      return { success: false, error: 'The destination must be an http or https address.' };
+    }
+    result.url = url;
+  }
+
+  if ('label' in data) {
+    result.label = sanitizeString(data.label, MAX_LENGTHS.label);
+  }
+
+  if ('is_active' in data) {
+    result.is_active = Boolean(data.is_active);
   }
 
   return { success: true, data: result };

@@ -69,19 +69,24 @@ RESTful design in `src/app/api/`:
 - `projects/` - Portfolio projects CRUD + `reorder`
 - `portfolio-profile/` - GET/PUT the /portfolio profile copy
 - `favicon/[host]` - edge-cached favicon proxy, used when a link's icon is `auto`
+- `short-links/` - short links CRUD (owner only)
+
+`/l/[code]` (`src/app/l/[code]/route.ts`) is the short link redirect: 302 to the destination, the visit recorded with `waitUntil` (source from `?s=`/`utm_source` or the referrer, campaign from `?c=`/`utm_campaign`, geo from Cloudflare `cf`, device/browser/OS and bot detection from `src/lib/user-agent.ts`, a salted daily visitor hash). Paused or unknown codes go to `/`.
 
 ### Database Schema
 
 - **sections**: slug, title, order, visibility
 - **links**: icon (`auto` = the destination's favicon), URL, optional description, all-time click count, order
-- **click_events**: one row per click (link, section, source, epoch ms) for the dashboard (`migrations/0008_admin_redesign.sql`)
+- **click_events**: one row per page click (link, section, source, epoch ms; plus country, city, device, browser, OS, language and daily visitor hash from `0010`) for the dashboard. Visit details come from `describeVisit()` in `src/lib/visit.ts`, shared with `/l/[code]`; bot beacons are dropped
 - **settings**: key-value store
 - **login_attempts**: rate limiting
+- **short_links** / **short_link_clicks**: `/l/<code>` redirects and one row per visit, bots kept with `is_bot = 1` (`migrations/0009_short_links.sql`). `short_links.link_id` ties one to a page link (`0010_link_short_links.sql`): every http(s) link gets one by default (switch + code in the link editor), its destination and name follow the link via `shortLinksService.syncForLink`, and deleting the link leaves it standalone
 - **projects**: portfolio projects (bilingual `_en`/`_es` text, stack, image/site/repo URLs, order, visibility)
 
 ### Admin
 
-- Four areas: Dashboard (`/admin`, click stats from `click_events`), Links (sections and their links in one view), Portfolio, Settings
+- Five areas: Dashboard (`/admin`, page clicks from `click_events` plus short link visits, merged in `stats.service.ts`), Links (sections and their links in one view), Short links (list + `/admin/short-links/[id]` stats), Portfolio, Settings
+- `Workbench` without `previewPages` drops the phone preview and opens the editor as a sheet at every width
 - Pages are server components that pass data to client workspaces in `src/components/admin/`
 - `Workbench` lays out the list plus a right pane: a live phone preview (an iframe of the public page) that the editor panel replaces while open; docked from 1180px, a sheet below
 - Styles live in `src/app/admin/admin.css`; the design direction is in `.impeccable/surfaces/src-app-admin-page-tsx.md`

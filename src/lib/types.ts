@@ -24,7 +24,23 @@ export interface Link {
   is_visible: number; // 0 or 1
   display_order: number;
   clicks: number;
+  /** code of its short link (/l/<code>), when it has one; admin listings only */
+  short_code?: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
+/** A /l/<code> redirect to any URL, tracked apart from the page's links */
+export interface ShortLink {
+  id: number;
+  code: string;
+  url: string;
+  label: string;
+  is_active: number; // 0 or 1
+  /** all-time human clicks */
+  clicks: number;
+  /** the page link it belongs to; its destination and name follow that link */
+  link_id: number | null;
   created_at: string;
   updated_at: string;
 }

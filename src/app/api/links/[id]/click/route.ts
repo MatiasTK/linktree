@@ -1,4 +1,5 @@
 import { clickSource } from '@/lib/click-source';
+import { describeVisit } from '@/lib/visit';
 import { validatePositiveInt } from '@/lib/validation';
 import { linksService } from '@/services/links.service';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
@@ -30,9 +31,13 @@ export async function POST(request: Request, { params }: RouteParams) {
 
   // Use waitUntil to ensure the click tracking completes in the background
   // This is required for Cloudflare Workers which terminate after the response is sent
+  const visit = await describeVisit(request);
+  // a scripted beacon is not a visitor
+  if (visit.isBot) return NextResponse.json({ success: true });
+
   const ctx = await getCloudflareContext({ async: true });
   ctx.ctx.waitUntil(
-    linksService.trackClick(linkId, source).catch((error) => {
+    linksService.trackClick(linkId, source, visit).catch((error) => {
       console.error('Error tracking click:', error);
     })
   );

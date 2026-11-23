@@ -1,6 +1,6 @@
 'use client';
 
-import { MAX_LENGTHS } from '@/lib/validation';
+import { MAX_LENGTHS, SHORT_CODE_MAX } from '@/lib/validation';
 import type { Link, Section } from '@/lib/types';
 import { useState } from 'react';
 import { api } from './api';
@@ -18,7 +18,7 @@ export function slugify(value: string) {
 }
 
 /** Accept "github.com/x" as "https://github.com/x" and an address as mailto:. */
-function normalizeUrl(raw: string) {
+export function normalizeUrl(raw: string) {
   const value = raw.trim();
   if (!value) return value;
   if (/^[a-z][a-z0-9+.-]*:/i.test(value)) return value;
@@ -47,6 +47,9 @@ export function LinkEditor({ link, sectionId, sections, onClose, onSaved, onDele
     description: link?.description ?? '',
     icon_type: link?.icon_type ?? 'auto',
     is_visible: link ? link.is_visible === 1 : true,
+    // new links get a short link; existing ones keep what they have
+    short_link: link ? Boolean(link.short_code) : true,
+    short_code: link?.short_code ?? '',
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +62,15 @@ export function LinkEditor({ link, sectionId, sections, onClose, onSaved, onDele
     setSaving(true);
     setError(null);
     try {
-      const body = { ...form, url, section_id: Number(form.section_id) };
+      const { short_code, ...rest } = form;
+      const code = short_code.trim();
+      const body = {
+        ...rest,
+        url,
+        section_id: Number(form.section_id),
+        // only send a code that was chosen or changed: an empty one means "random"
+        ...(code && code !== link?.short_code ? { short_code: code } : {}),
+      };
       if (link) await api(`/api/links/${link.id}`, 'PUT', body);
       else await api('/api/links', 'POST', body);
       await onSaved(link ? 'Link saved' : 'Link added');
@@ -120,7 +131,65 @@ export function LinkEditor({ link, sectionId, sections, onClose, onSaved, onDele
         checked={form.is_visible}
         onChange={(is_visible) => set({ is_visible })}
       />
+      <ShortLinkFields
+        link={link}
+        url={normalizeUrl(form.url)}
+        enabled={form.short_link}
+        code={form.short_code}
+        onEnabled={(short_link) => set({ short_link })}
+        onCode={(short_code) => set({ short_code })}
+      />
     </EditorPanel>
+  );
+}
+
+interface ShortLinkFieldsProps {
+  link: Link | null;
+  url: string;
+  enabled: boolean;
+  code: string;
+  onEnabled: (enabled: boolean) => void;
+  onCode: (code: string) => void;
+}
+
+/** The link's own short link: on by default, with its code. */
+function ShortLinkFields({ link, url, enabled, code, onEnabled, onCode }: ShortLinkFieldsProps) {
+  const linkable = !url || /^https?:/i.test(url);
+  const had = Boolean(link?.short_code);
+  const trimmed = code.trim();
+
+  let hint: React.ReactNode;
+  if (had && trimmed && trimmed !== link!.short_code) hint = <>The old address /l/{link!.short_code} stops working.</>;
+  else if (trimmed) hint = <>Share <span className="adm-mono">/l/{trimmed}</span> anywhere; visits show up in its stats and on the dashboard.</>;
+  else hint = 'Leave empty for a random code.';
+
+  return (
+    <>
+      <Switch
+        label="Short link"
+        description={
+          linkable
+            ? had && !enabled
+              ? `Turning it off deletes /l/${link!.short_code} and its visit history.`
+              : 'A /l/ address for this link, with full visit stats. It follows the link’s address.'
+            : 'Only for http and https addresses.'
+        }
+        checked={enabled && linkable}
+        onChange={onEnabled}
+      />
+      {enabled && linkable && (
+        <TextField
+          label="Short code"
+          value={code}
+          onChange={(value) => onCode(value.toLowerCase())}
+          onBlur={() => code && onCode(slugify(code).slice(0, SHORT_CODE_MAX))}
+          maxLength={SHORT_CODE_MAX}
+          placeholder="random"
+          mono
+          hint={hint}
+        />
+      )}
+    </>
   );
 }
 

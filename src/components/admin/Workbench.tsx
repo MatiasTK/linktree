@@ -13,10 +13,11 @@ interface WorkbenchProps {
   /** the open editor; it takes the preview's place in the pane */
   editor: ReactNode | null;
   onCloseEditor: () => void;
-  previewPages: PreviewPage[];
-  previewPath: string;
-  onPreviewPathChange: (path: string) => void;
-  previewVersion: number;
+  /** leave the preview out for areas that do not change the public page: the editor then opens as a sheet at every width */
+  previewPages?: PreviewPage[];
+  previewPath?: string;
+  onPreviewPathChange?: (path: string) => void;
+  previewVersion?: number;
 }
 
 function isTypingTarget(target: EventTarget | null) {
@@ -41,7 +42,8 @@ export function Workbench({
   onPreviewPathChange,
   previewVersion,
 }: WorkbenchProps) {
-  const docked = useMediaQuery(DOCKED_QUERY);
+  const hasPreview = previewPages !== undefined;
+  const docked = useMediaQuery(DOCKED_QUERY) && hasPreview;
   const [previewOpen, setPreviewOpen] = useState(false);
   const paneOpen = editor !== null || previewOpen;
 
@@ -72,22 +74,24 @@ export function Workbench({
   // mount the preview the first time it can be seen, then keep it (hidden under the editor)
   const [previewMounted, setPreviewMounted] = useState(false);
   useEffect(() => {
-    if (docked || previewOpen) setPreviewMounted(true);
-  }, [docked, previewOpen]);
+    if (hasPreview && (docked || previewOpen)) setPreviewMounted(true);
+  }, [hasPreview, docked, previewOpen]);
   const previewVisible = editor === null && (docked || previewOpen);
 
   return (
-    <div className="adm-work">
+    <div className="adm-work" data-sheet={hasPreview ? undefined : ''}>
       <div className="adm-work__list">
         <header className="adm-head">
           <div className="adm-head__title">
             <h1>{title}</h1>
             {meta && <span className="adm-head__meta adm-mono">{meta}</span>}
           </div>
-          <button type="button" className="btn btn-ghost adm-head__preview adm-only-narrow" onClick={() => setPreviewOpen(true)}>
-            <Smartphone size={17} aria-hidden />
-            Preview
-          </button>
+          {hasPreview && (
+            <button type="button" className="btn btn-ghost adm-head__preview adm-only-narrow" onClick={() => setPreviewOpen(true)}>
+              <Smartphone size={17} aria-hidden />
+              Preview
+            </button>
+          )}
           {actions && <div className="adm-head__actions">{actions}</div>}
         </header>
         <div className="adm-work__body">{children}</div>
@@ -101,13 +105,13 @@ export function Workbench({
       />
       <aside className="adm-pane" data-open={paneOpen} aria-label={editor ? 'Editor' : 'Preview'}>
         {editor}
-        {previewMounted && (
+        {previewMounted && previewPages && (
           <PhonePreview
             active={previewVisible}
             pages={previewPages}
-            path={previewPath}
-            onPathChange={onPreviewPathChange}
-            version={previewVersion}
+            path={previewPath ?? '/'}
+            onPathChange={onPreviewPathChange ?? (() => {})}
+            version={previewVersion ?? 0}
             onClose={docked ? undefined : () => setPreviewOpen(false)}
           />
         )}

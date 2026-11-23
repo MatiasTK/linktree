@@ -1,6 +1,6 @@
 'use client';
 
-import type { DayCount } from '@/services/stats.service';
+import type { DayCount } from '@/lib/stats-time';
 import { useId, useState } from 'react';
 
 const H = 180;

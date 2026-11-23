@@ -1,7 +1,10 @@
 import { LinkIcon } from '@/components/atoms';
 import { DailyChart } from '@/components/admin/DailyChart';
-import { STAT_RANGES, statsService, type NamedCount, type StatRange } from '@/services/stats.service';
-import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
+import { Change, number, Ranking, SOURCE_NAMES } from '@/components/admin/stats';
+import { City, Country, DEVICE_NAMES, languageName } from '@/components/admin/visit-labels';
+import type { NamedCount } from '@/lib/stats-time';
+import { STAT_RANGES, type StatRange } from '@/lib/stats-time';
+import { statsService } from '@/services/stats.service';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -10,69 +13,8 @@ interface PageProps {
   searchParams: Promise<{ range?: string }>;
 }
 
-const number = new Intl.NumberFormat('en');
-
-const SOURCE_NAMES: Record<string, string> = {
-  direct: 'Direct or unknown',
-  instagram: 'Instagram',
-  facebook: 'Facebook',
-  x: 'X',
-  linkedin: 'LinkedIn',
-  tiktok: 'TikTok',
-  youtube: 'YouTube',
-  github: 'GitHub',
-  reddit: 'Reddit',
-  whatsapp: 'WhatsApp',
-  telegram: 'Telegram',
-  discord: 'Discord',
-  google: 'Google',
-  bing: 'Bing',
-  duckduckgo: 'DuckDuckGo',
-};
-
-function change(current: number, previous: number) {
-  if (previous === 0) return current > 0 ? { label: 'new', dir: 'up' as const } : null;
-  const pct = Math.round(((current - previous) / previous) * 100);
-  if (pct === 0) return { label: '±0%', dir: 'flat' as const };
-  return { label: `${pct > 0 ? '+' : ''}${pct}%`, dir: pct > 0 ? ('up' as const) : ('down' as const) };
-}
-
-function Change({ current, previous }: { current: number; previous: number }) {
-  const c = change(current, previous);
-  if (!c) return <span className="adm-delta adm-mono">–</span>;
-  return (
-    <span className="adm-delta adm-mono" data-dir={c.dir}>
-      {c.dir === 'up' && <ArrowUpRight size={14} aria-hidden />}
-      {c.dir === 'down' && <ArrowDownRight size={14} aria-hidden />}
-      {c.label}
-    </span>
-  );
-}
-
-function Ranking({ title, rows, total, names }: { title: string; rows: NamedCount[]; total: number; names?: Record<string, string> }) {
-  const max = Math.max(1, ...rows.map((r) => r.clicks));
-  return (
-    <section className="adm-panel-card" aria-labelledby={`rank-${title}`}>
-      <h2 id={`rank-${title}`}>{title}</h2>
-      {rows.length === 0 ? (
-        <p className="adm-panel-card__empty">Nothing yet in this period.</p>
-      ) : (
-        <ol className="adm-rank">
-          {rows.slice(0, 8).map((row) => (
-            <li key={row.name}>
-              <span className="adm-rank__name">{names?.[row.name] ?? row.name}</span>
-              <span className="adm-rank__value adm-mono">
-                {number.format(row.clicks)}
-                <small>{Math.round((row.clicks / Math.max(1, total)) * 100)}%</small>
-              </span>
-              <span className="adm-rank__bar" style={{ width: `${(row.clicks / max) * 100}%` }} aria-hidden />
-            </li>
-          ))}
-        </ol>
-      )}
-    </section>
-  );
-}
+const sum = (rows: NamedCount[]) => rows.reduce((n, r) => n + r.clicks, 0);
+const sourceName = (name: string) => SOURCE_NAMES[name] ?? name;
 
 export default async function DashboardPage({ searchParams }: PageProps) {
   const { range: rawRange } = await searchParams;
@@ -127,13 +69,71 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                   </span>
                 </p>
               </div>
+              <dl className="adm-facts">
+                <div>
+                  <dt>Visitors</dt>
+                  <dd className="adm-mono">{stats.detailsAvailable ? number.format(stats.visitors) : '–'}</dd>
+                </div>
+                <div>
+                  <dt>On your page</dt>
+                  <dd className="adm-mono">{number.format(stats.pageClicks)}</dd>
+                </div>
+                <div>
+                  <dt>Via short links</dt>
+                  <dd className="adm-mono">{stats.shortLinksAvailable ? number.format(stats.shortClicks) : '–'}</dd>
+                </div>
+                <div>
+                  <dt>Countries</dt>
+                  <dd className="adm-mono">{stats.detailsAvailable ? stats.countries.length : '–'}</dd>
+                </div>
+              </dl>
               <DailyChart days={stats.daily} />
             </section>
 
+            {(!stats.shortLinksAvailable || !stats.detailsAvailable) && (
+              <div className="adm-panel-card adm-panel-card--wide">
+                <h2>Country, device and short link stats need {stats.shortLinksAvailable ? 'one migration' : 'two migrations'}</h2>
+                <p className="adm-panel-card__empty">Apply them once; details are recorded from that moment on.</p>
+                {!stats.shortLinksAvailable && (
+                  <code className="adm-code">npx wrangler d1 execute linktree-db --file=./migrations/0009_short_links.sql</code>
+                )}
+                <code className="adm-code">npx wrangler d1 execute linktree-db --file=./migrations/0010_link_short_links.sql</code>
+              </div>
+            )}
+
             <div className="adm-dash__pair">
               <Ranking title="By section" rows={stats.sections} total={stats.total} />
-              <Ranking title="Where visitors came from" rows={stats.sources} total={stats.total} names={SOURCE_NAMES} />
+              <Ranking title="Where visitors came from" rows={stats.sources} total={stats.total} label={sourceName} />
             </div>
+
+            {stats.detailsAvailable && (
+              <>
+                <div className="adm-dash__pair">
+                  <Ranking title="Countries" rows={stats.countries} total={sum(stats.countries)} label={(code) => <Country code={code} />} />
+                  <Ranking title="Cities" rows={stats.cities} total={sum(stats.cities)} label={(value) => <City value={value} />} />
+                </div>
+                <div className="adm-dash__pair">
+                  <Ranking title="Devices" rows={stats.devices} total={sum(stats.devices)} names={DEVICE_NAMES} />
+                  <Ranking title="Browsers and apps" rows={stats.browsers} total={sum(stats.browsers)} />
+                </div>
+                <div className="adm-dash__pair">
+                  <Ranking title="Operating systems" rows={stats.systems} total={sum(stats.systems)} />
+                  <Ranking title="Languages" rows={stats.languages} total={sum(stats.languages)} label={languageName} />
+                </div>
+              </>
+            )}
+
+            {stats.shortLinksAvailable && (
+              <div className="adm-dash__pair">
+                <Ranking
+                  title="Short links"
+                  rows={stats.shortLinks}
+                  total={stats.shortClicks}
+                  empty="No short link visits in this period."
+                  label={(code) => <span className="adm-mono">{code}</span>}
+                />
+              </div>
+            )}
 
             <section className="adm-panel-card adm-panel-card--wide" aria-labelledby="links-title">
               <h2 id="links-title">Links</h2>
@@ -151,6 +151,9 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                         <th scope="col" className="adm-num">
                           Clicks
                         </th>
+                        <th scope="col" className="adm-num adm-col-before" title="Of those clicks, the ones through its short link">
+                          Short link
+                        </th>
                         <th scope="col" className="adm-num adm-col-before">
                           Before
                         </th>
@@ -160,7 +163,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                       </tr>
                     </thead>
                     <tbody>
-                      {stats.links.map(({ link, sectionTitle, clicks, previous }) => (
+                      {stats.links.map(({ link, sectionTitle, clicks, previous, viaShort }) => (
                         <tr key={link.id}>
                           <td>
                             <span className="adm-table__link">
@@ -174,6 +177,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                             </span>
                           </td>
                           <td className="adm-num adm-mono">{number.format(clicks)}</td>
+                          <td className="adm-num adm-mono adm-muted adm-col-before">{viaShort ? number.format(viaShort) : '–'}</td>
                           <td className="adm-num adm-mono adm-muted adm-col-before">{number.format(previous)}</td>
                           <td className="adm-num">
                             <Change current={clicks} previous={previous} />

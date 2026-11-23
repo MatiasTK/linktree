@@ -1,5 +1,7 @@
 import { execute, query, queryFirst } from '@/lib/db';
 import type { Link } from '@/lib/types';
+import type { VisitDetails } from '@/lib/visit';
+import { shortLinksService } from './short-links.service';
 import {
   type ServiceResult,
   boolToInt,
@@ -25,6 +27,10 @@ export interface CreateLinkData {
   description?: string | null;
   is_visible?: boolean;
   display_order?: number;
+  /** give it a short link (default true) */
+  short_link?: boolean;
+  /** its code; empty for a random one */
+  short_code?: string | null;
 }
 
 export interface UpdateLinkData {
@@ -35,6 +41,20 @@ export interface UpdateLinkData {
   description?: string | null;
   is_visible?: boolean;
   display_order?: number;
+  short_link?: boolean;
+  short_code?: string | null;
+}
+
+/** Links with their short link's code; plain links until migration 0010 is applied. */
+async function withShortCodes(where: string, params: unknown[], order: string): Promise<Link[]> {
+  try {
+    return await query<Link>(
+      `SELECT l.*, s.code AS short_code FROM links l LEFT JOIN short_links s ON s.link_id = l.id ${where} ORDER BY ${order}`,
+      params,
+    );
+  } catch {
+    return query<Link>(`SELECT * FROM links l ${where} ORDER BY ${order}`, params);
+  }
 }
 
 // ============================================================================
@@ -47,26 +67,20 @@ export const linksService = {
    */
   async findAll(filters: LinkFilters = {}): Promise<ServiceResult<Link[]>> {
     try {
-      let sql = 'SELECT * FROM links';
       const conditions: string[] = [];
       const params: unknown[] = [];
 
       if (filters.sectionId !== undefined) {
-        conditions.push('section_id = ?');
+        conditions.push('l.section_id = ?');
         params.push(filters.sectionId);
       }
 
       if (filters.visibleOnly) {
-        conditions.push('is_visible = 1');
+        conditions.push('l.is_visible = 1');
       }
 
-      if (conditions.length > 0) {
-        sql += ' WHERE ' + conditions.join(' AND ');
-      }
-
-      sql += ' ORDER BY display_order ASC';
-
-      const links = await query<Link>(sql, params);
+      const where = conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : '';
+      const links = await withShortCodes(where, params, 'l.display_order ASC');
       return { success: true, data: links };
     } catch (error) {
       console.error('Error fetching links:', error);
@@ -97,6 +111,11 @@ export const linksService = {
    */
   async create(data: CreateLinkData): Promise<ServiceResult<Link>> {
     try {
+      // check a chosen short code before the link exists, so a taken one fails cleanly
+      if (data.short_link !== false && data.short_code && (await shortLinksService.isCodeTaken(data.short_code).catch(() => false))) {
+        return { success: false, error: `/l/${data.short_code} is already taken. Pick another code.`, status: 409 };
+      }
+
       // Auto-calculate display_order if not provided, otherwise shift existing items
       let displayOrder = data.display_order;
       if (displayOrder === undefined) {
@@ -123,11 +142,18 @@ export const linksService = {
         ]
       );
 
-      const newLink = await queryFirst<Link>('SELECT * FROM links WHERE id = ?', [
-        result.meta.last_row_id,
-      ]);
+      const newLink = (await queryFirst<Link>('SELECT * FROM links WHERE id = ?', [result.meta.last_row_id]))!;
 
-      return { success: true, data: newLink! };
+      let shortCode: string | null = null;
+      if (data.short_link !== false) {
+        const short = await shortLinksService
+          .syncForLink(newLink, { enabled: true, code: data.short_code })
+          .catch((error) => ({ success: false as const, error: String(error), status: 500 }));
+        if (short.success) shortCode = short.data?.code ?? null;
+        else console.error('Error creating the short link of a new link:', short);
+      }
+
+      return { success: true, data: { ...newLink, short_code: shortCode } };
     } catch (error) {
       console.error('Error creating link:', error);
       const message = error instanceof Error ? error.message : 'Failed to create link';
@@ -148,6 +174,11 @@ export const linksService = {
       const existing = await queryFirst<Link>('SELECT * FROM links WHERE id = ?', [id]);
       if (!existing) {
         return { success: false, error: 'Link not found', status: 404 };
+      }
+
+      // short link changes first: a taken code should stop the whole save
+      if (data.short_code && (await shortLinksService.isCodeTaken(data.short_code, (await shortLinksService.findByLink(id))?.id))) {
+        return { success: false, error: `/l/${data.short_code} is already taken. Pick another code.`, status: 409 };
       }
 
       // Moving to another section: append at its end and close the gap left behind
@@ -190,7 +221,8 @@ export const linksService = {
         ],
       });
 
-      if (fieldCount === 0) {
+      const shortChange = data.short_link !== undefined || data.short_code !== undefined;
+      if (fieldCount === 0 && !shortChange) {
         return { success: false, error: 'No fields to update', status: 400 };
       }
 
@@ -201,8 +233,22 @@ export const linksService = {
         );
       }
 
-      const updated = await queryFirst<Link>('SELECT * FROM links WHERE id = ?', [id]);
-      return { success: true, data: updated! };
+      const updated = (await queryFirst<Link>('SELECT * FROM links WHERE id = ?', [id]))!;
+
+      // keep the short link on the link's address and name (and apply the switch)
+      let shortCode: string | null = null;
+      try {
+        const short = await shortLinksService.syncForLink(updated, {
+          enabled: data.short_link,
+          code: data.short_code,
+        });
+        if (!short.success) return short as ServiceResult<Link>;
+        shortCode = short.data?.code ?? null;
+      } catch (error) {
+        console.error('Error syncing short link:', error); // migration 0010 not applied
+      }
+
+      return { success: true, data: { ...updated, short_code: shortCode } };
     } catch (error) {
       console.error('Error updating link:', error);
       return { success: false, error: 'Failed to update link', status: 500 };
@@ -222,6 +268,7 @@ export const linksService = {
       const deletedOrder = existing.display_order;
       const sectionId = existing.section_id;
       await execute('DELETE FROM links WHERE id = ?', [id]);
+      await shortLinksService.detachLink(id);
       await execute(
         'UPDATE links SET display_order = display_order - 1, updated_at = CURRENT_TIMESTAMP WHERE section_id = ? AND display_order > ?',
         [sectionId, deletedOrder]
@@ -252,18 +299,30 @@ export const linksService = {
    * Track a link click (fire-and-forget operation): bump the all-time counter
    * and record one dated event for the dashboard.
    */
-  async trackClick(id: number, source: string): Promise<void> {
+  async trackClick(id: number, source: string, visit?: VisitDetails): Promise<void> {
     try {
       const link = await queryFirst<Pick<Link, 'id' | 'section_id'>>('SELECT id, section_id FROM links WHERE id = ?', [id]);
       if (!link) return;
       await execute('UPDATE links SET clicks = clicks + 1 WHERE id = ?', [id]);
-      // fails quietly until migration 0008 is applied; the counter above still works
-      await execute('INSERT INTO click_events (link_id, section_id, source, created_at) VALUES (?, ?, ?, ?)', [
-        link.id,
-        link.section_id,
-        source,
-        Date.now(),
-      ]).catch((error) => console.error('Error recording click event:', error));
+      const base = [link.id, link.section_id, source, Date.now()];
+      // visit details need migration 0010; without it, record the plain event (0008)
+      await execute(
+        `INSERT INTO click_events (link_id, section_id, source, created_at, country, region, city, device, browser, os, language, visitor)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          ...base,
+          visit?.country ?? null,
+          visit?.region ?? null,
+          visit?.city ?? null,
+          visit?.device ?? null,
+          visit?.browser ?? null,
+          visit?.os ?? null,
+          visit?.language ?? null,
+          visit?.visitor ?? null,
+        ],
+      )
+        .catch(() => execute('INSERT INTO click_events (link_id, section_id, source, created_at) VALUES (?, ?, ?, ?)', base))
+        .catch((error) => console.error('Error recording click event:', error));
     } catch (error) {
       console.error('Error tracking click:', error);
     }
@@ -320,7 +379,7 @@ export const linksService = {
    */
   async getAll(): Promise<Link[]> {
     try {
-      return await query<Link>('SELECT * FROM links ORDER BY display_order ASC');
+      return await withShortCodes('', [], 'l.display_order ASC');
     } catch (error) {
       console.error('Error fetching links:', error);
       return [];

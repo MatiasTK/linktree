@@ -2,13 +2,14 @@
 
 import { LogoutButton } from '@/components/LogoutButton';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { BarChart3, Briefcase, ExternalLink, Link2, SlidersHorizontal } from 'lucide-react';
+import { BarChart3, Briefcase, ExternalLink, Link2, Scissors, SlidersHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const AREAS = [
   { href: '/admin', label: 'Dashboard', icon: BarChart3, exact: true },
   { href: '/admin/links', label: 'Links', icon: Link2 },
+  { href: '/admin/short-links', label: 'Short links', icon: Scissors },
   { href: '/admin/portfolio', label: 'Portfolio', icon: Briefcase },
   { href: '/admin/settings', label: 'Settings', icon: SlidersHorizontal },
 ];
@@ -24,7 +25,7 @@ export function AdminRail() {
       </Link>
       <nav className="adm-rail__nav">
         {AREAS.map(({ href, label, icon: Icon, exact }) => {
-          const current = exact ? pathname === href : pathname.startsWith(href);
+          const current = exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
           return (
             <Link key={href} href={href} className="adm-rail__item" aria-current={current ? 'page' : undefined}>
               <Icon size={20} strokeWidth={2} aria-hidden />
